@@ -1,0 +1,23 @@
+{
+  "name": "i18n-shaking",
+  "version": "1.0.0",
+  "description": "filter i18n keys",
+  "main": "./lib/index.js",
+  "bin": {
+    "shaking": "./lib/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "gitlab@git.garena.com:liqi.shi/i18n-shaking.git"
+  },
+  "author": "liqi.shi",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {}
+}
