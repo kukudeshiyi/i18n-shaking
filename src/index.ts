@@ -1,7 +1,8 @@
-import ts from "typescript";
+import ts from 'typescript';
 import { PluginType } from "./types/index";
 import parseI18nPointT from "./plugins/parseI18nPointT";
-function main(file: string[], options?: ts.CompilerOptions) {
+
+export default function i18nShaking(file: string[], options?: ts.CompilerOptions) {
   const plugins = [parseI18nPointT].reduce(
     (pluginsArr: Array<PluginType>, pluginFactory: unknown) => {
       if (typeof pluginFactory === "function") {
@@ -47,10 +48,14 @@ function main(file: string[], options?: ts.CompilerOptions) {
   }
 
   const handleResults = Array.from(new Set(results));
-  console.log("handleResults:", JSON.stringify(handleResults));
-  console.log("errors", errors);
+  // console.log("handleResults:", JSON.stringify(handleResults));
+  // console.log("errors", errors);
+  return {
+    handleResults,
+    errors
+  }
 }
 
-main(process.argv.slice(2), {
-  jsx: ts.JsxEmit.ReactNative,
+i18nShaking(process.argv.slice(2), {
+   jsx: ts.JsxEmit.ReactNative,
 });

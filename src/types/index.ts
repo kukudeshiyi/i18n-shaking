@@ -4,9 +4,9 @@ export interface PluginParseReturnValueType {
   errors: string[];
 }
 export interface PluginType {
-  isFit: (node: ts.Node, sourceFile: ts.SourceFile) => boolean;
+  isFit: (node: ts.Node, sourceFile: ts.SourceFile) => boolean
   parse: (
     node: ts.Node,
     sourceFile: ts.SourceFile
-  ) => PluginParseReturnValueType;
+  ) => PluginParseReturnValueType
 }

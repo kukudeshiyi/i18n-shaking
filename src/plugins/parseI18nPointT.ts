@@ -1,5 +1,7 @@
 import ts from "typescript";
 import { PluginType } from "../types/index";
+
+
 const EXPRESSION_NODE_ESCAPED_TEXT = "i18n";
 const NAME_NODE_ESCAPED_TEXT = "t";
 const ERROR_MSG_ONE =
@@ -88,7 +90,7 @@ export default function parseI18nPointT(): PluginType {
         }
 
         if (results.length <= 0 && errors.length <= 0) {
-          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE));
+          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE))
         }
 
         return {
