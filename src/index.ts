@@ -1,15 +1,18 @@
 import ts from 'typescript';
-import { PluginType } from "./types/index";
-import parseI18nPointT from "./plugins/parseI18nPointT";
+import { PluginType } from './types/index';
+import parseI18nPointT from './plugins/parseI18nPointT';
 
-export default function i18nShaking(file: string[], options?: ts.CompilerOptions) {
+export default function i18nShaking(
+  file: string[],
+  options?: ts.CompilerOptions
+) {
   const plugins = [parseI18nPointT].reduce(
     (pluginsArr: Array<PluginType>, pluginFactory: unknown) => {
-      if (typeof pluginFactory === "function") {
+      if (typeof pluginFactory === 'function') {
         const plugin = pluginFactory();
         if (
-          typeof plugin.isFit === "function" &&
-          typeof plugin.parse === "function"
+          typeof plugin.isFit === 'function' &&
+          typeof plugin.parse === 'function'
         ) {
           pluginsArr.push(plugin);
         }
@@ -23,6 +26,7 @@ export default function i18nShaking(file: string[], options?: ts.CompilerOptions
   const sourceFiles = program.getSourceFiles().filter((sourceFile) => {
     return !sourceFile.isDeclarationFile;
   });
+
   const results: string[] = [];
   const errors: string[] = [];
   let currentSourceFile: ts.SourceFile | null = null;
@@ -39,7 +43,7 @@ export default function i18nShaking(file: string[], options?: ts.CompilerOptions
         const {
           results: singleNodeParseResults,
           errors: singleNodeParseErrors,
-        } = parse(node, currentSourceFile);
+        } = parse(node, currentSourceFile, program);
         results.push(...singleNodeParseResults);
         errors.push(...singleNodeParseErrors);
       }
@@ -52,10 +56,10 @@ export default function i18nShaking(file: string[], options?: ts.CompilerOptions
   // console.log("errors", errors);
   return {
     handleResults,
-    errors
-  }
+    errors,
+  };
 }
 
 i18nShaking(process.argv.slice(2), {
-   jsx: ts.JsxEmit.ReactNative,
+  jsx: ts.JsxEmit.ReactNative,
 });

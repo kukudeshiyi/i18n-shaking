@@ -1,13 +1,12 @@
-import ts from "typescript";
-import { PluginType } from "../types/index";
+import ts from 'typescript';
+import { PluginType } from '../types/index';
 
-
-const EXPRESSION_NODE_ESCAPED_TEXT = "i18n";
-const NAME_NODE_ESCAPED_TEXT = "t";
+const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';
+const NAME_NODE_ESCAPED_TEXT = 't';
 const ERROR_MSG_ONE =
-  "The parameters of the i18n.t function are not completely static string literals and cannot be completely statically analyzed. Please check and add them manually";
+  'The parameters of the i18n.t function are not completely static string literals and cannot be completely statically analyzed. Please check and add them manually';
 const ERROR_MSG_TWO =
-  "Existence of ternary expression non-static string literal, please check and add manually";
+  'Existence of ternary expression non-static string literal, please check and add manually';
 
 function createErrorMessage(
   node: ts.Node,
@@ -60,49 +59,72 @@ export default function parseI18nPointT(): PluginType {
         return false;
       }
     },
-    parse: (node: ts.Node, sourceFile: ts.SourceFile) => {
-      try {
-        const results: string[] = [];
-        const errors: string[] = [];
+    parse: (node: ts.Node, sourceFile: ts.SourceFile, program: ts.Program) => {
+      // try {
+      const results: string[] = [];
+      const errors: string[] = [];
 
-        const callExpressionParams = (node as ts.CallExpression).arguments;
-        const firstParamNode = callExpressionParams[0];
+      const callExpressionParams = (node as ts.CallExpression).arguments;
+      const firstParamNode = callExpressionParams[0];
+      const typeChecker = program.getTypeChecker();
+      // typeChecker.getContextualType
 
-        if (ts.isStringLiteral(firstParamNode)) {
-          results.push(firstParamNode.text);
-        }
-
-        if (ts.isConditionalExpression(firstParamNode)) {
-          const trueResultNode = firstParamNode.whenTrue;
-          const falseResultNode = firstParamNode.whenFalse;
-
-          if (ts.isStringLiteral(trueResultNode)) {
-            results.push(trueResultNode.text);
-          } else {
-            errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
-          }
-
-          if (ts.isStringLiteral(falseResultNode)) {
-            results.push(falseResultNode.text);
-          } else {
-            errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
-          }
-        }
-
-        if (results.length <= 0 && errors.length <= 0) {
-          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE))
-        }
-
-        return {
-          results,
-          errors,
-        };
-      } catch (e) {
-        return {
-          results: [],
-          errors: [],
-        };
+      //case 1 字符串变量
+      if (ts.isStringLiteral(firstParamNode)) {
+        results.push(firstParamNode.text);
       }
+
+      //case 2 三元表达式
+      if (ts.isConditionalExpression(firstParamNode)) {
+        const trueResultNode = firstParamNode.whenTrue;
+        const falseResultNode = firstParamNode.whenFalse;
+
+        if (ts.isStringLiteral(trueResultNode)) {
+          results.push(trueResultNode.text);
+        } else {
+          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
+        }
+
+        if (ts.isStringLiteral(falseResultNode)) {
+          results.push(falseResultNode.text);
+        } else {
+          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
+        }
+      }
+
+      //case 3 字符串拼接
+      if (ts.isTemplateExpression(firstParamNode)) {
+        const strArray = [];
+        strArray.push(firstParamNode.head.text);
+
+        const typeChecker = program.getTypeChecker();
+
+        firstParamNode.templateSpans.forEach((span) => {
+          const type = typeChecker.getTypeAtLocation(span.expression);
+
+          if (type.isLiteral()) {
+            strArray.push(type.value);
+          }
+          strArray.push(span.literal.text);
+        });
+
+        results.push(strArray.join(''));
+      }
+
+      if (results.length <= 0 && errors.length <= 0) {
+        errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE));
+      }
+
+      return {
+        results,
+        errors,
+      };
+      // } catch (e) {
+      //   return {
+      //     results: [],
+      //     errors: [],
+      //   };
+      // }
     },
   };
 }
