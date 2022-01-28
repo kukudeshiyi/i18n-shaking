@@ -31,4 +31,32 @@ test('multi dynamic tranlation should be scan', async () => {
   assert.equal(JSON.stringify(errors), '[]');
 });
 
+test('dynamic single from other tranlation should be scan', async () => {
+  const { handleResults, errors } = i18nShaking(
+    ['tests/dynamic/__fixtures__/fromothercomponent/single.tsx'],
+    {
+      jsx: ts.JsxEmit.ReactNative,
+    }
+  );
+  assert.equal(
+    JSON.stringify(handleResults),
+    JSON.stringify(['helloworldbrandon'])
+  );
+  assert.equal(JSON.stringify(errors), '[]');
+});
+
+test('dynamic multi from other tranlation should be scan', async () => {
+  const { handleResults, errors } = i18nShaking(
+    ['tests/dynamic/__fixtures__/fromothercomponent/multi.tsx'],
+    {
+      jsx: ts.JsxEmit.ReactNative,
+    }
+  );
+  assert.equal(
+    JSON.stringify(handleResults),
+    JSON.stringify(['helloworldbrandon!!!'])
+  );
+  assert.equal(JSON.stringify(errors), '[]');
+});
+
 test.run();
