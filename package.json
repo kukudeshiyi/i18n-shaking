@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsup src/index.ts",
-    "test": "uvu -r tsm tests test.ts"
+    "test": "uvu -r tsm tests stringConcatenation.test.ts"
   },
   "repository": {
     "type": "git",

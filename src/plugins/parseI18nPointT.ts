@@ -22,6 +22,23 @@ function createErrorMessage(
   }) ${errorMessage}`;
 }
 
+function stringConcatenation(
+  paramNode: ts.BinaryExpression,
+  res: string
+): string {
+  if (ts.isStringLiteral(paramNode.left)) {
+    if (ts.isStringLiteral(paramNode.right)) {
+      return paramNode.left.text + paramNode.right.text;
+    }
+  } else if (ts.isBinaryExpression(paramNode.left)) {
+    if (ts.isStringLiteral(paramNode.right)) {
+      return stringConcatenation(paramNode.left, res) + paramNode.right.text;
+    }
+  }
+
+  return '';
+}
+
 export default function parseI18nPointT(): PluginType {
   return {
     isFit: (node: ts.Node, sourceFile: ts.SourceFile) => {
@@ -67,7 +84,6 @@ export default function parseI18nPointT(): PluginType {
       const callExpressionParams = (node as ts.CallExpression).arguments;
       const firstParamNode = callExpressionParams[0];
       const typeChecker = program.getTypeChecker();
-      // typeChecker.getContextualType
 
       //case 1 字符串变量
       if (ts.isStringLiteral(firstParamNode)) {
@@ -92,12 +108,10 @@ export default function parseI18nPointT(): PluginType {
         }
       }
 
-      //case 3 字符串拼接
+      //case 3 字符串模版拼接
       if (ts.isTemplateExpression(firstParamNode)) {
         const strArray = [];
         strArray.push(firstParamNode.head.text);
-
-        const typeChecker = program.getTypeChecker();
 
         firstParamNode.templateSpans.forEach((span) => {
           const type = typeChecker.getTypeAtLocation(span.expression);
@@ -109,6 +123,12 @@ export default function parseI18nPointT(): PluginType {
         });
 
         results.push(strArray.join(''));
+      }
+
+      //case 4 字符串拼接
+      if (ts.isBinaryExpression(firstParamNode)) {
+        const text = stringConcatenation(firstParamNode, '');
+        results.push(text);
       }
 
       if (results.length <= 0 && errors.length <= 0) {
