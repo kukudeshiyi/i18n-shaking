@@ -4,10 +4,13 @@ export interface PluginParseReturnValueType {
   errors: string[];
 }
 export interface PluginType {
-  isFit: (node: ts.Node, sourceFile: ts.SourceFile) => boolean;
+  getFunctionName: (node: ts.Node, sourceFile: ts.SourceFile) => string | null;
+  isFit: (node: ts.Node, sourceFile: ts.SourceFile, tag: string) => boolean;
   parse: (
     node: ts.Node,
     sourceFile: ts.SourceFile,
     program: ts.Program
   ) => PluginParseReturnValueType;
 }
+
+export const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';

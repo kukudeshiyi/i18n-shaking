@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { PluginType } from './types/index';
+import { EXPRESSION_NODE_ESCAPED_TEXT, PluginType } from './types/index';
 import parseI18nPointT from './plugins/parseI18nPointT';
 
 export default function i18nShaking(
@@ -30,16 +30,28 @@ export default function i18nShaking(
   const results: string[] = [];
   const errors: string[] = [];
   let currentSourceFile: ts.SourceFile | null = null;
+  let isOneSource = true;
+  let tag = EXPRESSION_NODE_ESCAPED_TEXT;
 
   sourceFiles.forEach((sourceFile) => {
     currentSourceFile = sourceFile;
+    isOneSource = true;
+    tag = EXPRESSION_NODE_ESCAPED_TEXT;
     ts.forEachChild(sourceFile, visit);
   });
 
   function visit(node: ts.Node) {
     plugins.forEach((plugin) => {
-      const { isFit, parse } = plugin;
-      if (currentSourceFile && isFit(node, currentSourceFile)) {
+      const { getFunctionName, isFit, parse } = plugin;
+      if (currentSourceFile && isOneSource) {
+        const res = getFunctionName(node, currentSourceFile);
+        if (res) {
+          tag = res;
+          isOneSource = false;
+        }
+      }
+
+      if (currentSourceFile && isFit(node, currentSourceFile, tag)) {
         const {
           results: singleNodeParseResults,
           errors: singleNodeParseErrors,

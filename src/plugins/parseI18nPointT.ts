@@ -41,7 +41,18 @@ function stringConcatenation(
 
 export default function parseI18nPointT(): PluginType {
   return {
-    isFit: (node: ts.Node, sourceFile: ts.SourceFile) => {
+    getFunctionName: (node: ts.Node, sourceFile: ts.SourceFile) => {
+      if (ts.isImportDeclaration(node)) {
+        if (node.moduleSpecifier.text === EXPRESSION_NODE_ESCAPED_TEXT) {
+          const res = node.importClause?.namedBindings
+            ? node.importClause?.namedBindings.name.escapedText
+            : node.importClause?.name.escapedText;
+          return res;
+        }
+      }
+      return null;
+    },
+    isFit: (node: ts.Node, sourceFile: ts.SourceFile, tag: string) => {
       try {
         const isCallExpression = ts.isCallExpression(node);
         if (!isCallExpression) {
@@ -65,7 +76,7 @@ export default function parseI18nPointT(): PluginType {
         }
 
         if (
-          expressionNode.escapedText !== EXPRESSION_NODE_ESCAPED_TEXT ||
+          expressionNode.escapedText !== tag ||
           nameNode.escapedText !== NAME_NODE_ESCAPED_TEXT
         ) {
           return false;

@@ -13,5 +13,15 @@ test('alias string tranlation should be scan', async () => {
   assert.equal(JSON.stringify(handleResults), JSON.stringify(['hello']));
   assert.equal(JSON.stringify(errors), '[]');
 });
+test('alias default string tranlation should be scan', async () => {
+  const { handleResults, errors } = i18nShaking(
+    ['tests/alias/__fixtures__/default.tsx'],
+    {
+      jsx: ts.JsxEmit.ReactNative,
+    }
+  );
+  assert.equal(JSON.stringify(handleResults), JSON.stringify(['hello']));
+  assert.equal(JSON.stringify(errors), '[]');
+});
 
 test.run();
