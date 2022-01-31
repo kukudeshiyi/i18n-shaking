@@ -4,7 +4,7 @@
   "description": "filter i18n keys",
   "main": "./lib/index.js",
   "bin": {
-    "shaking": "./lib/index.js"
+    "i18n-shaking": "./bin.js"
   },
   "scripts": {
     "build": "tsup src/index.ts",

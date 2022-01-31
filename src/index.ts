@@ -2,10 +2,11 @@ import ts from 'typescript';
 import { EXPRESSION_NODE_ESCAPED_TEXT, PluginType } from './types/index';
 import parseI18nPointT from './plugins/parseI18nPointT';
 
-export default function i18nShaking(
-  file: string[],
-  options?: ts.CompilerOptions
-) {
+const defaultOptions = {
+  jsx: ts.JsxEmit.ReactJSX,
+};
+
+export function i18nShaking(file: string[], options?: ts.CompilerOptions) {
   const plugins = [parseI18nPointT].reduce(
     (pluginsArr: Array<PluginType>, pluginFactory: unknown) => {
       if (typeof pluginFactory === 'function') {
@@ -22,7 +23,10 @@ export default function i18nShaking(
     []
   );
 
-  const program = ts.createProgram(file, options || {});
+  const program = ts.createProgram(
+    file,
+    Object.assign(defaultOptions, options)
+  );
   const sourceFiles = program.getSourceFiles().filter((sourceFile) => {
     return !sourceFile.isDeclarationFile;
   });
@@ -64,14 +68,9 @@ export default function i18nShaking(
   }
 
   const handleResults = Array.from(new Set(results));
-  // console.log("handleResults:", JSON.stringify(handleResults));
-  // console.log("errors", errors);
+
   return {
     handleResults,
     errors,
   };
 }
-
-i18nShaking(process.argv.slice(2), {
-  jsx: ts.JsxEmit.ReactNative,
-});
