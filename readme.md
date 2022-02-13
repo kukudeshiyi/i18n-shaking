@@ -1,1 +1,5 @@
-### i18n-shaking
+# i18n-shaking
+
+## Install
+
+## Use
