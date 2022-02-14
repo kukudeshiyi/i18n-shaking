@@ -4,8 +4,7 @@ export interface PluginParseReturnValueType {
   errors: string[];
 }
 export interface PluginType {
-  getFunctionName: (node: ts.Node, sourceFile: ts.SourceFile) => string | null;
-  isFit: (node: ts.Node, sourceFile: ts.SourceFile, tag: string) => boolean;
+  isFit: (node: ts.Node, sourceFile: ts.SourceFile) => boolean;
   parse: (
     node: ts.Node,
     sourceFile: ts.SourceFile,
