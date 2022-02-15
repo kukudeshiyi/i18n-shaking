@@ -12,4 +12,11 @@ export interface PluginType {
   ) => PluginParseReturnValueType;
 }
 
-export const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';
+export interface ConfigParams {
+  entry: string;
+  translateFileDirectoryPath: string;
+  translateFileName: string[];
+  output: string;
+}
+
+export type GetCib
