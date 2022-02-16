@@ -1,3 +1,6 @@
-import fs from 'fs';
-
-export default function readTranslateKeyFile() {}
+import { TranslateKeyFileData, ConfigParams } from '../types/index';
+export function readTranslateKeyFile(
+  configParams: ConfigParams
+): Array<TranslateKeyFileData> {
+  return [];
+}

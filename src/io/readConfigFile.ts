@@ -1,11 +1,8 @@
-import exp from 'constants';
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { ConfigParams } from '../types';
+import { CONFIG_FILE_NAME } from '../constants';
 import { isAbsolutePath, isDirectory, isValidPath } from './utils';
-
-const CONFIG_FILE_NAME = 'i18nShaking.config.json';
-const OBJECT_FLAG = '[object Object]';
 
 export async function readConfigFile(): Promise<ConfigParams | undefined> {
   const currentExecPath = process.cwd();
@@ -25,18 +22,4 @@ export async function readConfigFile(): Promise<ConfigParams | undefined> {
     console.log('failed to read config file!');
     return;
   }
-}
-
-export function validateConfigParams(configParams: ConfigParams | undefined) {
-  let validateStatus = true;
-  const isObject =
-    Object.prototype.toString.apply(configParams) === OBJECT_FLAG;
-  if (!isObject) {
-    validateStatus = false;
-    return validateStatus;
-  }
-  const { entry, output, translateFileDirectoryPath, translateFileName } =
-    configParams!;
-
-  return validateStatus;
 }

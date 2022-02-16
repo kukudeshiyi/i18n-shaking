@@ -1,30 +1,32 @@
 import ts from 'typescript';
-import { EXPRESSION_NODE_ESCAPED_TEXT, PluginType } from './types/index';
+import { PluginType, FindKeys } from './types/index';
+import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
+import { output, readConfigFile, readTranslateKeyFile } from './io';
+import { filterTranslateKeyFile } from './filterTranslateKeyFile';
+import { validateConfigParams } from './validateConfigParams';
 
 const defaultOptions = {
   jsx: ts.JsxEmit.ReactJSX,
 };
 
-function loadingPlugins(plugins: Array<() => PluginType>) {
-  return plugins.reduce(
-    (pluginsArr: Array<PluginType>, pluginFactory: unknown) => {
-      if (typeof pluginFactory === 'function') {
-        const plugin = pluginFactory();
-        if (
-          typeof plugin.isFit === 'function' &&
-          typeof plugin.parse === 'function'
-        ) {
-          pluginsArr.push(plugin);
-        }
-      }
-      return pluginsArr;
-    },
-    []
-  );
-}
-
-export function i18nShaking(file: string[], options?: ts.CompilerOptions) {
+export async function i18nShaking(
+  file: string[],
+  options?: ts.CompilerOptions
+) {
+  // 读取参数 (先以配置文件为主，后面整合cli参数)
+  // 校验参数
+  // 读取校验 plugin
+  // 创建 ts program，获取非声明文件的 sourceFile 集合
+  // 遍历 sourceFile，调用 plugin 依次进行处理
+  // 获取所有遍历到的 keys
+  // 读取翻译文件，进行过滤
+  // 输出过后的翻译 key 以及 warning & errors 输出
+  const configParams = await readConfigFile();
+  const validateResult = validateConfigParams(configParams);
+  if (!validateResult) {
+    return;
+  }
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
   const results: string[] = [];
   const errors: string[] = [];
@@ -71,10 +73,11 @@ export function i18nShaking(file: string[], options?: ts.CompilerOptions) {
     ts.forEachChild(node, visit);
   }
 
-  const handleResults = Array.from(new Set(results));
-
-  return {
-    handleResults,
-    errors,
-  };
+  const findKeys: FindKeys = Array.from(new Set(results));
+  const translateKeyFileData = await readTranslateKeyFile(configParams!);
+  const filterTranslateKeyFileData = filterTranslateKeyFile(
+    findKeys,
+    translateKeyFileData
+  );
+  output(filterTranslateKeyFileData, configParams!);
 }

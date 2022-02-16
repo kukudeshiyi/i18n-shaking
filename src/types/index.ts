@@ -18,5 +18,8 @@ export interface ConfigParams {
   translateFileName: string[];
   output: string;
 }
+export interface TranslateKeyFileData {
+  [key: string]: string;
+}
 
-export type GetCib
+export type FindKeys = Array<String>;
