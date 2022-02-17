@@ -20,10 +20,13 @@ test('import { i18n, store } from "i18nt"', async () => {
       jsx: ts.JsxEmit.ReactNative,
     }
   );
-  assert.equal(JSON.stringify(fits), JSON.stringify(['trans', 'i18n']));
+  assert.equal(
+    JSON.stringify(fits),
+    JSON.stringify(['trans', 'i18n', 't', 'tt'])
+  );
   assert.equal(
     JSON.stringify(results),
-    JSON.stringify(['name_key', 'age_key', 'hello'])
+    JSON.stringify(['name_key', 'age_key', 'use_t', 'use_tt', 'hello', 'hello'])
   );
 });
 test('import multi', async () => {

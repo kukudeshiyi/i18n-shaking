@@ -50,6 +50,7 @@ export async function i18nShaking(
             { name: 'i18n', path: '' },
             { name: 'trans', path: 'i18nt' },
             { name: '', path: 'i18n' },
+            { name: 't', path: 'i18n' },
           ]) &&
           !currentSourceFilePlugins.includes(plugin)
         ) {
@@ -63,8 +64,6 @@ export async function i18nShaking(
     currentSourceFilePlugins.forEach((plugin) => {
       const { results: singleNodeParseResults, errors: singleNodeParseErrors } =
         plugin.parse(node, currentSourceFile!, program);
-      console.log('results', results);
-
       results.push(...singleNodeParseResults);
       errors.push(...singleNodeParseErrors);
     });
