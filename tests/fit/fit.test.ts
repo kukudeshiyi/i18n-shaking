@@ -1,4 +1,4 @@
-import { i18nShaking } from '../../src/utilsfortest';
+import { i18nShakingForTest as i18nShaking } from '../../src/index';
 import { test } from 'uvu';
 import * as assert from 'uvu/assert';
 import ts from 'typescript';

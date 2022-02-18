@@ -45,7 +45,7 @@ export default function parseI18nPointT(): PluginType {
     isFit: (node: ts.Node, sourceFile: ts.SourceFile, importInfos) => {
       // 先给配置信息排个序
       importInfos
-        ?.sort((a, b) => {
+        .sort((a, b) => {
           if (a.path && !b.path) {
             return -1;
           }

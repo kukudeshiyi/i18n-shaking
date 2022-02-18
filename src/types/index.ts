@@ -7,7 +7,7 @@ export interface PluginType {
   isFit: (
     node: ts.Node,
     sourceFile: ts.SourceFile,
-    importInfos?: ImportInfos[]
+    importInfos: ImportInfos[]
   ) => boolean;
   parse: (
     node: ts.Node,
