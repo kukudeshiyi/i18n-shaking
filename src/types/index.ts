@@ -1,4 +1,5 @@
 import ts from 'typescript';
+import { PATH_TYPE } from '../constants';
 export interface PluginParseReturnValueType {
   results: string[];
   errors: string[];
@@ -34,3 +35,9 @@ export interface TranslateKeyFileData {
 }
 
 export type FindKeys = Array<String>;
+
+export interface HandlePathOptions {
+  expect: PATH_TYPE;
+  checkReadable?: boolean;
+  checkWritable?: boolean;
+}

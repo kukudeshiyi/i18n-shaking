@@ -1,14 +1,14 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { ConfigParams } from '../types';
-import { CONFIG_FILE_NAME } from '../constants';
-import { isAbsolutePath, isDirectory, isValidPath } from './utils';
+import { CONFIG_FILE_NAME, LOG_TYPE } from '../constants';
+import { logMessages } from '../utils';
 
 export async function readConfigFile(): Promise<ConfigParams | undefined> {
   const currentExecPath = process.cwd();
   const configFilePath = path.join(currentExecPath, CONFIG_FILE_NAME);
   const configJson = await readFile(configFilePath, 'utf8').catch((e) => {
-    console.log('config file not found!');
+    logMessages(['config file not found'], LOG_TYPE.ERROR);
   });
 
   if (!configJson) {
@@ -19,7 +19,7 @@ export async function readConfigFile(): Promise<ConfigParams | undefined> {
     const configObject = JSON.parse(configJson);
     return configObject;
   } catch (e) {
-    console.log('failed to read config file!');
+    logMessages(['Failed to parse configuration file'], LOG_TYPE.ERROR);
     return;
   }
 }

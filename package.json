@@ -30,6 +30,7 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
+    "chalk": "^5.0.0",
     "sade": "^1.7.4"
   }
 }

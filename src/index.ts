@@ -4,7 +4,9 @@ import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
 import { output, readConfigFile, readTranslateKeyFile } from './io';
 import { filterTranslateKeyFile } from './filterTranslateKeyFile';
-import { validateConfigParams } from './validateConfigParams';
+import { handleConfigParams as validateConfigParams } from './validateConfigParams';
+import { logMessages } from './utils';
+import { LOG_TYPE } from './constants';
 
 const defaultOptions = {
   jsx: ts.JsxEmit.ReactJSX,
@@ -104,8 +106,10 @@ export async function i18nShaking(
   // 读取翻译文件，进行过滤
   // 输出过后的翻译 key 以及 warning & errors 输出
   const configParams = await readConfigFile();
-  const validateResult = validateConfigParams(configParams);
-  if (!validateResult) {
+  const { status, validateErrors, handleConfigParams } =
+    await validateConfigParams(configParams);
+  if (!status) {
+    logMessages(validateErrors, LOG_TYPE.ERROR);
     return;
   }
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
