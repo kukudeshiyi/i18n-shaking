@@ -1,61 +1,14 @@
-import { access, stat } from 'fs/promises';
-import { constants } from 'fs';
-import { isAbsolute, join } from 'path';
-import { HandlePathOptions } from '../types';
-import { PATH_TYPE, PATH_CHECK_STATUS } from '../constants';
+import { join } from 'path';
+import { HandlePathOptions } from './types';
+import { PATH_TYPE, PATH_CHECK_STATUS } from './constants';
+import {
+  isValidPath,
+  isAbsolutePath,
+  isDirectory,
+  isFileReadable,
+  isFileWritable,
+} from './utils';
 
-export async function isValidPath(path: string) {
-  const isValid = await access(path)
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
-
-  return isValid;
-}
-
-export async function isFileReadable(path: string) {
-  const isReadable = await access(path, constants.R_OK)
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
-
-  return isReadable;
-}
-
-export async function isFileWritable(path: string) {
-  const isWritable = await access(path, constants.W_OK)
-    .then(() => {
-      return true;
-    })
-    .catch(() => {
-      return false;
-    });
-
-  return isWritable;
-}
-
-export async function isDirectory(path: string) {
-  try {
-    const isDirectory = await stat(path).then((stat) => {
-      return stat.isDirectory();
-    });
-    return isDirectory;
-  } catch (e) {
-    return Promise.reject();
-  }
-}
-
-export function isAbsolutePath(path: string) {
-  return isAbsolute(path);
-}
-
-// 校验 & 处理路径
 export async function handlePath(path: string, options: HandlePathOptions) {
   const { expect, checkReadable = true, checkWritable = true } = options;
   const isAbsolute = isAbsolutePath(path);
@@ -112,4 +65,13 @@ export async function handlePath(path: string, options: HandlePathOptions) {
     status: PATH_CHECK_STATUS.SUCCESS,
     path,
   };
+}
+
+export async function handleTranslateNames(
+  handleTranslateFileDirectoryPath: string,
+  translateFileNames: string[]
+): Promise<string[]> {
+  return translateFileNames.map((translateFileName) => {
+    return join(handleTranslateFileDirectoryPath, translateFileName);
+  });
 }

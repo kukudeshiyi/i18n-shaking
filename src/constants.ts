@@ -17,7 +17,7 @@ export enum PATH_CHECK_STATUS {
 export enum CONFIG_PARAMS {
   ENTRY = 'entry',
   TRANSLATE_FILE_DIRECTORY_PATH = 'translateFileDirectoryPath',
-  TRANSLATE_FILE_NAME = 'translateFileName',
+  TRANSLATE_FILE_NAMES = 'translateFileNames',
   OUTPUT = 'output',
   IMPORT_INFOS = 'importInfos',
 }

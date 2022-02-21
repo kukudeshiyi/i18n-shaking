@@ -1,7 +1,7 @@
 import { test } from 'uvu';
 import path from 'path';
 import * as assert from 'uvu/assert';
-import { isValidPath } from '../../src/io/utils';
+import { isValidPath } from '../../src/utils/path';
 import { CONFIG_FILE_NAME } from '../../src/constants';
 
 // utils

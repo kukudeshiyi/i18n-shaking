@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { PluginType, FindKeys, ConfigParams, ImportInfos } from './types/index';
+import { PluginType, FindKeys, ConfigParams } from './types/index';
 import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
 import { output, readConfigFile, readTranslateKeyFile } from './io';
@@ -52,8 +52,6 @@ function runPlugins(
   sourceFiles.forEach((sourceFile) => {
     currentSourceFile = sourceFile;
     currentSourceFilePlugins = [];
-    // 遍历 sourceFile 子节点，过滤无用 plugin
-    // 遍历 sourceFile 所有节点，匹配解析翻译文案
     ts.forEachChild(sourceFile, filterPlugins);
     ts.forEachChild(sourceFile, visit);
     currentSourceFilePlugins.forEach((plugin) => {
@@ -97,14 +95,6 @@ export async function i18nShaking(
   file: string[],
   options?: ts.CompilerOptions
 ) {
-  // 读取参数 (先以配置文件为主，后面整合cli参数)
-  // 校验参数
-  // 读取校验 plugin
-  // 创建 ts program，获取非声明文件的 sourceFile 集合
-  // 遍历 sourceFile，调用 plugin 依次进行处理
-  // 获取所有遍历到的 keys
-  // 读取翻译文件，进行过滤
-  // 输出过后的翻译 key 以及 warning & errors 输出
   const configParams = await readConfigFile();
   const { status, validateErrors, handleConfigParams } =
     await validateConfigParams(configParams);
@@ -113,9 +103,14 @@ export async function i18nShaking(
     return;
   }
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
-  const { results } = runPlugins(file, allPlugins, configParams!, options);
+  const { results } = runPlugins(
+    file,
+    allPlugins,
+    handleConfigParams!,
+    options
+  );
 
-  shaking(results, configParams!);
+  shaking(results, handleConfigParams!);
 }
 
 export async function i18nShakingForTest(
@@ -126,7 +121,7 @@ export async function i18nShakingForTest(
   const configParam = {
     entry: '',
     translateFileDirectoryPath: '',
-    translateFileName: [''],
+    translateFileNames: [''],
     output: '',
     importInfos: [
       { name: 'i18n', path: '' },

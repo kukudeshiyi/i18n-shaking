@@ -26,7 +26,7 @@ export interface ImportInfos {
 export interface ConfigParams {
   entry: string;
   translateFileDirectoryPath: string;
-  translateFileName: string[];
+  translateFileNames: string[];
   output: string;
   importInfos?: ImportInfos[];
 }

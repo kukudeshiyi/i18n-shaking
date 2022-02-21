@@ -1,14 +1,8 @@
 import { ConfigParams } from './types';
 import { OBJECT_FLAG } from './constants';
-import { handlePath } from './io/utils';
+import { handlePath, handleTranslateNames } from './handleConfigParams';
 import { PATH_CHECK_STATUS, PATH_TYPE, CONFIG_PARAMS } from './constants';
 
-// 对于路径的校验
-// 判断路径是不是绝对路径，不是绝对路径转成绝对路径
-// 判断当前路径是否为有效路径
-// 路径是文件路径还是文件夹路径
-// 对于需要文件路径但是配置为文件夹的路径进行文件匹配（文件名联想）
-// 如果是文件还要判断文件是否可读或者可写
 export async function handleConfigParams(
   configParams: ConfigParams | undefined
 ) {
@@ -32,7 +26,7 @@ export async function handleConfigParams(
   const output = configParams![CONFIG_PARAMS.OUTPUT];
   const translateFileDirectoryPath =
     configParams![CONFIG_PARAMS.TRANSLATE_FILE_DIRECTORY_PATH];
-  const translateFileName = configParams![CONFIG_PARAMS.TRANSLATE_FILE_NAME];
+  const translateFileNames = configParams![CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
   const importInfos = configParams![CONFIG_PARAMS.IMPORT_INFOS];
 
   const { status: handleEntryPathStatus, path: handleEntryPath } =
@@ -83,12 +77,32 @@ export async function handleConfigParams(
     );
   }
 
-  if (!Array.isArray(translateFileName) || translateFileName.length <= 0) {
+  if (!Array.isArray(translateFileNames) || translateFileNames.length <= 0) {
     validateStatus = false;
     validateErrors.push(
-      `The ${CONFIG_PARAMS.TRANSLATE_FILE_NAME} parameter is wrong, please check`
+      `The ${CONFIG_PARAMS.TRANSLATE_FILE_NAMES} parameter is wrong, please check`
     );
   }
+
+  const handleTranslatePaths = await handleTranslateNames(
+    handleTranslateFileDirectoryPath,
+    translateFileNames
+  );
+
+  await Promise.all(
+    handleTranslatePaths.map(async (handleTranslatePath, index) => {
+      const { status, path } = await handlePath(handleTranslatePath, {
+        expect: PATH_TYPE.FILE,
+        checkWritable: true,
+      });
+      if (!status) {
+        validateStatus = false;
+        validateErrors.push(
+          `The translation file with the filename ${translateFileNames[index]} in the ${CONFIG_PARAMS.TRANSLATE_FILE_NAMES} parameter was not found`
+        );
+      }
+    })
+  );
 
   if (
     !Array.isArray(importInfos) ||
@@ -109,7 +123,7 @@ export async function handleConfigParams(
       entry: handleEntryPath,
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
-      translateFileName,
+      translateFileNames,
     },
   };
 }
