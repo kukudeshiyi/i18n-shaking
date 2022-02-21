@@ -123,7 +123,7 @@ export async function handleConfigParams(
       entry: handleEntryPath,
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
-      translateFileNames,
+      translateFileNames: handleTranslatePaths,
     },
   };
 }
