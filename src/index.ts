@@ -14,6 +14,9 @@ export async function i18nShaking(
   options?: ts.CompilerOptions
 ) {
   const configParams = await readConfigFile();
+  if (!configParams) {
+    return;
+  }
   const { status, validateErrors, handleConfigParams } =
     await validateConfigParams(configParams);
   if (!status) {
@@ -21,14 +24,14 @@ export async function i18nShaking(
     return;
   }
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
-  const { results } = runPlugins(
+  const { results, warnings } = runPlugins(
     file,
     allPlugins,
     handleConfigParams!,
     options
   );
 
-  shaking(results, handleConfigParams!);
+  shaking(results, warnings, handleConfigParams!);
 }
 
 export async function i18nShakingForTest(

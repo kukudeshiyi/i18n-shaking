@@ -4,18 +4,18 @@ import * as assert from 'uvu/assert';
 import ts from 'typescript';
 
 test('dynamic tranlation should be scan', async () => {
-  const { results, errors } = await i18nShaking(
+  const { results, warnings } = await i18nShaking(
     ['tests/dynamic/__fixtures__/single.tsx'],
     {
       jsx: ts.JsxEmit.ReactNative,
     }
   );
   assert.equal(JSON.stringify(results), JSON.stringify(['helloworldbrandon']));
-  assert.equal(JSON.stringify(errors), '[]');
+  assert.equal(JSON.stringify(warnings), '[]');
 });
 
 test('multi dynamic tranlation should be scan', async () => {
-  const { results, errors } = await i18nShaking(
+  const { results, warnings } = await i18nShaking(
     ['tests/dynamic/__fixtures__/multi.tsx'],
     {
       jsx: ts.JsxEmit.ReactNative,
@@ -25,22 +25,22 @@ test('multi dynamic tranlation should be scan', async () => {
     JSON.stringify(results),
     JSON.stringify(['helloworldbrandonx~'])
   );
-  assert.equal(JSON.stringify(errors), '[]');
+  assert.equal(JSON.stringify(warnings), '[]');
 });
 
 test('dynamic single from other tranlation should be scan', async () => {
-  const { results, errors } = await i18nShaking(
+  const { results, warnings } = await i18nShaking(
     ['tests/dynamic/__fixtures__/fromothercomponent/single.tsx'],
     {
       jsx: ts.JsxEmit.ReactNative,
     }
   );
   assert.equal(JSON.stringify(results), JSON.stringify(['helloworldbrandon']));
-  assert.equal(JSON.stringify(errors), '[]');
+  assert.equal(JSON.stringify(warnings), '[]');
 });
 
 test('dynamic multi from other tranlation should be scan', async () => {
-  const { results, errors } = await i18nShaking(
+  const { results, warnings } = await i18nShaking(
     ['tests/dynamic/__fixtures__/fromothercomponent/multi.tsx'],
     {
       jsx: ts.JsxEmit.ReactNative,
@@ -50,7 +50,7 @@ test('dynamic multi from other tranlation should be scan', async () => {
     JSON.stringify(results),
     JSON.stringify(['helloworldbrandon!!!'])
   );
-  assert.equal(JSON.stringify(errors), '[]');
+  assert.equal(JSON.stringify(warnings), '[]');
 });
 
 test.run();

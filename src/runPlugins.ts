@@ -20,7 +20,7 @@ export function runPlugins(
   });
 
   const results: string[] = [];
-  const errors: string[] = [];
+  const warnings: string[] = [];
   const fits: string[] = [];
   let currentSourceFilePlugins: PluginType[] = [];
   let currentSourceFile: ts.SourceFile | null = null;
@@ -57,13 +57,15 @@ export function runPlugins(
 
   function visit(node: ts.Node) {
     currentSourceFilePlugins.forEach((plugin) => {
-      const { results: singleNodeParseResults, errors: singleNodeParseErrors } =
-        plugin.parse(node, currentSourceFile!, program);
+      const {
+        results: singleNodeParseResults,
+        warnings: singleNodeParseWarnings,
+      } = plugin.parse(node, currentSourceFile!, program);
       results.push(...singleNodeParseResults);
-      errors.push(...singleNodeParseErrors);
+      warnings.push(...singleNodeParseWarnings);
     });
     ts.forEachChild(node, visit);
   }
 
-  return { results, errors, fits };
+  return { results, warnings, fits };
 }

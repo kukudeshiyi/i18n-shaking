@@ -1,6 +1,18 @@
 import { TranslateKeyFileData, ConfigParams } from '../types/index';
-export function readTranslateKeyFile(
+import { CONFIG_PARAMS } from '../constants';
+import { readFile } from 'fs/promises';
+
+export async function readTranslateKeyFile(
   configParams: ConfigParams
-): Array<TranslateKeyFileData> {
-  return [];
+): Promise<Array<TranslateKeyFileData>> {
+  const translateFileNames = configParams[CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
+  const translateKeyFileDataArr = await Promise.all(
+    translateFileNames.map(async (translateFileName) => {
+      const translateKeyFileJson = await readFile(translateFileName, 'utf8');
+      return JSON.parse(translateKeyFileJson);
+    })
+  ).catch(() => {
+    return [];
+  });
+  return translateKeyFileDataArr;
 }

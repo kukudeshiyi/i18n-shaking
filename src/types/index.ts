@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { PATH_TYPE } from '../constants';
 export interface PluginParseReturnValueType {
   results: string[];
-  errors: string[];
+  warnings: string[];
 }
 export interface PluginType {
   isFit: (
@@ -34,7 +34,7 @@ export interface TranslateKeyFileData {
   [key: string]: string;
 }
 
-export type FindKeys = Array<String>;
+export type FindKeys = Array<string>;
 
 export interface HandlePathOptions {
   expect: PATH_TYPE;

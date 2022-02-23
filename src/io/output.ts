@@ -1,10 +1,32 @@
 import { TranslateKeyFileData, ConfigParams } from '../types/index';
-// 输出过滤文件
-// 输出提示信息
-export function output(
+import { CONFIG_PARAMS } from '../constants';
+import { basename, join } from 'path';
+import { writeFile } from 'fs/promises';
+
+export async function output(
   translateKeys: Array<TranslateKeyFileData>,
   configParams: ConfigParams
-) {
-  // 根据 output 路径输出
-  // TODO: 后续优化，如果 output 未配置则采用覆盖读取文件的方式进行输出
+): Promise<boolean> {
+  const output = configParams[CONFIG_PARAMS.OUTPUT];
+  const translateFileNames = configParams[CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
+  const outputFileNames = translateFileNames.map((translateFileName) =>
+    basename(translateFileName)
+  );
+  const outputFilePaths = outputFileNames.map((fileName) =>
+    join(output, fileName)
+  );
+  try {
+    const handleTranslateKeysJson = translateKeys.map((keysObj) =>
+      JSON.stringify(keysObj)
+    );
+
+    await Promise.all(
+      outputFilePaths.map(async (path, index) => {
+        return await writeFile(path, handleTranslateKeysJson[index]);
+      })
+    );
+  } catch (e) {
+    return false;
+  }
+  return true;
 }

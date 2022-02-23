@@ -1,6 +1,5 @@
 import ts, { NamedImports, NamespaceImport } from 'typescript';
 import { ImportInfos, PluginType } from '../types/index';
-import path from 'path';
 const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';
 const NAME_NODE_ESCAPED_TEXT = 't';
 const ERROR_MSG_ONE =
@@ -190,11 +189,11 @@ export default function parseI18nPointT(): PluginType {
       if (!isI18nCall()) {
         return {
           results: [],
-          errors: [],
+          warnings: [],
         };
       }
       const results: string[] = [];
-      const errors: string[] = [];
+      const warnings: string[] = [];
       const callExpressionParams = (node as ts.CallExpression).arguments;
       const firstParamNode = callExpressionParams[0];
       const typeChecker = program.getTypeChecker();
@@ -212,13 +211,13 @@ export default function parseI18nPointT(): PluginType {
         if (ts.isStringLiteral(trueResultNode)) {
           results.push(trueResultNode.text);
         } else {
-          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
+          warnings.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
         }
 
         if (ts.isStringLiteral(falseResultNode)) {
           results.push(falseResultNode.text);
         } else {
-          errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
+          warnings.push(createErrorMessage(node, sourceFile, ERROR_MSG_TWO));
         }
       }
 
@@ -245,12 +244,12 @@ export default function parseI18nPointT(): PluginType {
         results.push(text);
       }
 
-      if (results.length <= 0 && errors.length <= 0) {
-        errors.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE));
+      if (results.length <= 0 && warnings.length <= 0) {
+        warnings.push(createErrorMessage(node, sourceFile, ERROR_MSG_ONE));
       }
       return {
         results,
-        errors,
+        warnings,
       };
     },
     getImportNames: (): string[] => {
