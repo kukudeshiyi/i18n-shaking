@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { CONFIG_PARAMS } from '../../../src/constants';
 
 export const TEST_OUTPUT_PATH = join(__dirname, './output');
 
@@ -17,7 +18,7 @@ export const case1 = {
     },
   ],
   param2: {
-    output: TEST_OUTPUT_PATH,
-    translateFileNames: TEST_TRANSLATE_FILE_NAMES,
+    [CONFIG_PARAMS.OUTPUT]: TEST_OUTPUT_PATH,
+    [CONFIG_PARAMS.TRANSLATE_FILE_NAMES]: TEST_TRANSLATE_FILE_NAMES,
   },
 };
