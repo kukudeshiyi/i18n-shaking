@@ -46,7 +46,7 @@ test('import { i18n, store } from "i18nt"', async () => {
   // );
   assert.equal(
     JSON.stringify(results),
-    JSON.stringify(['name_key', 'age_key', 'use_t', 'use_tt', 'hello', 'hello'])
+    JSON.stringify(['name_key', 'age_key', 'use_tt', 'hello', 'hello'])
   );
 });
 test('import multi result', async () => {

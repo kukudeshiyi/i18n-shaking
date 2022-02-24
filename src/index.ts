@@ -48,7 +48,7 @@ export async function i18nShakingForTest(
       { name: 'i18n', path: '' },
       { name: 'trans', path: 'i18nt' },
       { name: '', path: 'i18n' },
-      { name: 't', path: 'i18n' },
+      { name: 't', path: 'i18n-t' },
       { name: 'useTranslation', path: 'react-i18next' },
     ],
   };

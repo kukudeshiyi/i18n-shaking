@@ -114,8 +114,6 @@ export default function parseI18nPointT(): PluginType {
                     ? (node2.importClause?.namedBindings as NamespaceImport)
                         .name?.escapedText
                     : node2.importClause?.name?.escapedText;
-                  console.log('res', res);
-
                   return res as string;
                 }
                 continue;
@@ -163,8 +161,6 @@ export default function parseI18nPointT(): PluginType {
       };
       const deconstructName = getDeconstruct(node);
       if (funcName || deconstructName) {
-        console.log('funcName', funcName);
-
         importIdentifierName.push(funcName || deconstructName);
         return true;
       }
