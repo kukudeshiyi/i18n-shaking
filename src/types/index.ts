@@ -1,7 +1,9 @@
 import ts from 'typescript';
 import { PATH_TYPE } from '../constants';
 export interface PluginParseReturnValueType {
+  //结果集合
   results: string[];
+  //未识别集合
   warnings: string[];
 }
 export interface PluginType {
@@ -16,7 +18,7 @@ export interface PluginType {
     program: ts.Program
   ) => PluginParseReturnValueType;
   getImportNames: () => string[];
-  clear: () => void;
+  afterEachSourceFile?: () => void;
 }
 
 export interface ImportInfos {

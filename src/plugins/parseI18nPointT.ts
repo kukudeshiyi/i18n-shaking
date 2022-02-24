@@ -81,6 +81,8 @@ export default function parseI18nPointT(): PluginType {
                   return elementValue.name?.escapedText;
                 }
               }
+              return (_node.importClause?.namedBindings as NamespaceImport).name
+                ?.escapedText;
             } catch (error) {}
           }
           if (_node.importClause?.name) {
@@ -112,6 +114,8 @@ export default function parseI18nPointT(): PluginType {
                     ? (node2.importClause?.namedBindings as NamespaceImport)
                         .name?.escapedText
                     : node2.importClause?.name?.escapedText;
+                  console.log('res', res);
+
                   return res as string;
                 }
                 continue;
@@ -128,8 +132,40 @@ export default function parseI18nPointT(): PluginType {
         return '';
       };
       const funcName = getI18nFunctionName(node);
-      if (funcName) {
-        importIdentifierName.push(funcName);
+
+      const getDeconstruct = (node2: ts.Node): string => {
+        if (ts.isVariableDeclaration(node2)) {
+          const i18nFuncName =
+            node2.initializer?.escapedText ||
+            node2.initializer?.expression?.escapedText;
+
+          if (importIdentifierName.indexOf(i18nFuncName) >= 0) {
+            let res = '';
+            // like const trans = i18n()
+            if (node2.name.escapedText) {
+              res = node2.name.escapedText;
+            }
+            // like const { t,s } = i18n();
+            if (node2.name.elements) {
+              const element = node2.name.elements.find(
+                (_element) =>
+                  _element.name.escapedText === NAME_NODE_ESCAPED_TEXT
+              );
+
+              element && (res = element.name.escapedText);
+            }
+            return res;
+          }
+
+          return '';
+        }
+        return '';
+      };
+      const deconstructName = getDeconstruct(node);
+      if (funcName || deconstructName) {
+        console.log('funcName', funcName);
+
+        importIdentifierName.push(funcName || deconstructName);
         return true;
       }
       if (importIdentifierName.length > 0) {
@@ -195,9 +231,15 @@ export default function parseI18nPointT(): PluginType {
       const results: string[] = [];
       const warnings: string[] = [];
       const callExpressionParams = (node as ts.CallExpression).arguments;
+
+      if (callExpressionParams.length === 0) {
+        return {
+          results: [],
+          warnings: [],
+        };
+      }
       const firstParamNode = callExpressionParams[0];
       const typeChecker = program.getTypeChecker();
-
       //case 1 字符串变量
       if (ts.isStringLiteral(firstParamNode)) {
         results.push(firstParamNode.text);
@@ -255,7 +297,7 @@ export default function parseI18nPointT(): PluginType {
     getImportNames: (): string[] => {
       return importIdentifierName;
     },
-    clear: () => {
+    afterEachSourceFile: () => {
       importIdentifierName.length = 0;
     },
   };

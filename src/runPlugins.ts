@@ -4,6 +4,14 @@ const defaultOptions = {
   jsx: ts.JsxEmit.ReactJSX,
 };
 
+/**
+ * 运行插件
+ * @param file 入口文件
+ * @param allPlugins 插件列表
+ * @param configParams 配置信息
+ * @param options ts配置
+ * @returns [Object] { results:结果集合, warnings:未识别集合, fits:适用于当前模块的变量名集合 }
+ */
 export function runPlugins(
   file: string[],
   allPlugins: PluginType[],
@@ -21,7 +29,7 @@ export function runPlugins(
 
   const results: string[] = [];
   const warnings: string[] = [];
-  const fits: string[] = [];
+  const fits: string[] = []; //适用于当前模块的变量名集合
   let currentSourceFilePlugins: PluginType[] = [];
   let currentSourceFile: ts.SourceFile | null = null;
 
@@ -33,13 +41,12 @@ export function runPlugins(
     currentSourceFilePlugins.forEach((plugin) => {
       fits.length = 0;
       fits.push(...plugin.getImportNames());
-
-      plugin.clear();
+      plugin.afterEachSourceFile?.();
     });
   });
 
   function filterPlugins(node: ts.Node) {
-    if (ts.isImportDeclaration(node)) {
+    if (ts.isImportDeclaration(node) || ts.isVariableDeclaration(node)) {
       allPlugins.forEach((plugin) => {
         if (
           plugin.isFit(
@@ -53,6 +60,7 @@ export function runPlugins(
         }
       });
     }
+    ts.forEachChild(node, filterPlugins);
   }
 
   function visit(node: ts.Node) {

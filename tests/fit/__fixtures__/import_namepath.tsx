@@ -10,9 +10,9 @@ function main() {
   const r5 = t('use_t');
   const r6 = tt('use_tt');
   return (
-    <div>
+    <View>
       <div>{i18n.t('hello')}</div>
-      <div>{i18n('hello')}</div>
-    </div>
+      <Text>{i18n('hello')}</Text>
+    </View>
   );
 }
