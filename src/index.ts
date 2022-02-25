@@ -45,10 +45,9 @@ export async function i18nShakingForTest(
     translateFileNames: [''],
     output: '',
     importInfos: [
-      { name: 'i18n', path: '' },
-      { name: 'trans', path: 'i18nt' },
-      { name: '', path: 'i18n' },
-      { name: 't', path: 'i18n-t' },
+      { name: 'i18n', path: '' }, // 匹配-导出名
+      { name: '', path: 'i18nDir' }, // 匹配-导入路径
+      { name: 't', path: 'i18n-t' }, // 匹配导出名以及导入路径
       { name: 'useTranslation', path: 'react-i18next' },
     ],
   };

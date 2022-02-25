@@ -1,5 +1,5 @@
 import test from 'path';
-import * as trans from 'i18n';
+import * as trans from 'i18nDir';
 import tt from 'typescript';
 
 function main() {

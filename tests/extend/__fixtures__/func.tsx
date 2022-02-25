@@ -5,7 +5,7 @@ export default withRouter(() => {
   const { t } = useTranslation();
   return (
     <View>
-      <Text>{t('hello' + 'world' + 'brandon')}</Text>
+      <Text>{t('hello')}</Text>
     </View>
   );
 });

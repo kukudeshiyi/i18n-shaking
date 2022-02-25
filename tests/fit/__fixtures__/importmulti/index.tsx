@@ -1,6 +1,4 @@
-import test from 'path';
-import * as trans from 'i18n';
-import tt from 'typescript';
+import * as trans from 'i18nDir';
 import Child from './child';
 import React from 'react';
 function main() {

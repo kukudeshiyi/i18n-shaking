@@ -218,12 +218,14 @@ export default function parseI18nPointT(): PluginType {
           return false;
         }
       };
+
       if (!isI18nCall()) {
         return {
           results: [],
           warnings: [],
         };
       }
+
       const results: string[] = [];
       const warnings: string[] = [];
       const callExpressionParams = (node as ts.CallExpression).arguments;
