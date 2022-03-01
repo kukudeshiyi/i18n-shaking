@@ -4,10 +4,10 @@
 
 ## Use
 
-1、在项目根目录下创建 i18nShaking.config.json
-2、配置示例如下
+1. 在项目根目录下创建 i18nShaking.config.json
+2. 配置示例如下
 
-```
+```json
 {
   "entry": "./src/index.tsx",
   "output": "./output",
