@@ -4,8 +4,7 @@
 
 ## Use
 
-1. 在项目根目录下创建 i18nShaking.config.json
-2. 配置示例如下
+1. Create a file named "i18nShaking.config.json" in the project root directory,The configuration example is as follows
 
 ```json
 {
@@ -22,3 +21,19 @@
   "frame": "react"
 }
 ```
+
+2. If it is a global installation,execute the following command directly
+
+   ```
+   i18n-shaking
+   ```
+
+3. If only installed within the project，register i18n-shaking as an npm script in the package.json file,
+   examples are as follows
+   ```json
+   {
+     "scripts": {
+       "shaking": "i18n-shaking"
+     }
+   }
+   ```
