@@ -4,9 +4,12 @@ import { ConfigParams } from '../types';
 import { CONFIG_FILE_NAME, LOG_TYPE } from '../constants';
 import { logMessages } from '../utils';
 
-export async function readConfigFile(): Promise<ConfigParams | undefined> {
+export async function readConfigFile(
+  configFilePath?: string
+): Promise<ConfigParams | undefined> {
   const currentExecPath = process.cwd();
-  const configFilePath = path.join(currentExecPath, CONFIG_FILE_NAME);
+  configFilePath =
+    configFilePath || path.join(currentExecPath, CONFIG_FILE_NAME);
   const configJson = await readFile(configFilePath, 'utf8').catch((e) => {
     logMessages(['config file not found'], LOG_TYPE.ERROR);
   });

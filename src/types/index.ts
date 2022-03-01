@@ -40,6 +40,5 @@ export type FindKeys = Array<string>;
 
 export interface HandlePathOptions {
   expect: PATH_TYPE;
-  checkReadable?: boolean;
-  checkWritable?: boolean;
+  rootPath?: string;
 }
