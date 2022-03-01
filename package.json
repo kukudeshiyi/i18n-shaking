@@ -6,6 +6,7 @@
   "bin": {
     "i18n-shaking": "./bin.js"
   },
+  "type": "commonjs",
   "scripts": {
     "build": "tsup src/index.ts",
     "test": "uvu -r tsm tests test.ts"
@@ -30,7 +31,7 @@
     "prettier": "^2.5.1"
   },
   "dependencies": {
-    "chalk": "^5.0.0",
+    "chalk": "4.1.2",
     "sade": "^1.7.4"
   }
 }
