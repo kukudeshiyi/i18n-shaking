@@ -4,8 +4,10 @@ import { handlePath, handleTranslateNames } from './handleConfigParams';
 import { PATH_CHECK_STATUS, PATH_TYPE, CONFIG_PARAMS } from './constants';
 
 export async function handleConfigParams(
-  configParams: ConfigParams | undefined
+  configParams: ConfigParams | undefined,
+  rootPath?: string
 ) {
+  // 基础格式校验
   let validateStatus = true;
   const validateErrors = [];
   const isObject =
@@ -22,6 +24,7 @@ export async function handleConfigParams(
     };
   }
 
+  // 获取参数
   const entry = configParams![CONFIG_PARAMS.ENTRY];
   const output = configParams![CONFIG_PARAMS.OUTPUT];
   const translateFileDirectoryPath =
@@ -29,10 +32,11 @@ export async function handleConfigParams(
   const translateFileNames = configParams![CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
   const importInfos = configParams![CONFIG_PARAMS.IMPORT_INFOS];
 
+  // 对 entry 的校验处理
   const { status: handleEntryPathStatus, path: handleEntryPath } =
     await handlePath(entry, {
       expect: PATH_TYPE.FILE,
-      checkReadable: true,
+      rootPath,
     });
 
   if (handleEntryPathStatus !== PATH_CHECK_STATUS.SUCCESS) {
@@ -45,9 +49,11 @@ export async function handleConfigParams(
     );
   }
 
+  // 对 output 的校验处理
   const { status: handleOutputStatus, path: handleOutputPath } =
     await handlePath(output, {
       expect: PATH_TYPE.DIRECTORY,
+      rootPath,
     });
 
   if (handleOutputStatus !== PATH_CHECK_STATUS.SUCCESS) {
@@ -60,11 +66,13 @@ export async function handleConfigParams(
     );
   }
 
+  //  对 translateFileDirectoryPath 的校验处理
   const {
     status: handleTranslateFileDirectoryStatus,
     path: handleTranslateFileDirectoryPath,
   } = await handlePath(translateFileDirectoryPath, {
     expect: PATH_TYPE.DIRECTORY,
+    rootPath,
   });
 
   if (handleTranslateFileDirectoryStatus !== PATH_CHECK_STATUS.SUCCESS) {
@@ -77,6 +85,7 @@ export async function handleConfigParams(
     );
   }
 
+  // 对 translateFileNames 的校验处理
   if (!Array.isArray(translateFileNames) || translateFileNames.length <= 0) {
     validateStatus = false;
     validateErrors.push(
@@ -91,9 +100,9 @@ export async function handleConfigParams(
 
   await Promise.all(
     handleTranslatePaths.map(async (handleTranslatePath, index) => {
-      const { status, path } = await handlePath(handleTranslatePath, {
+      const { status } = await handlePath(handleTranslatePath, {
         expect: PATH_TYPE.FILE,
-        checkWritable: true,
+        rootPath,
       });
       if (!status) {
         validateStatus = false;
@@ -104,6 +113,7 @@ export async function handleConfigParams(
     })
   );
 
+  // 对 importInfos 的校验处理
   if (
     !Array.isArray(importInfos) ||
     !importInfos.every((importInfoItem) => {
@@ -120,6 +130,7 @@ export async function handleConfigParams(
     status: validateStatus,
     validateErrors,
     handleConfigParams: {
+      ...configParams,
       entry: handleEntryPath,
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
