@@ -1,3 +1,4 @@
+//@ts-nocheck
 import ts, { NamedImports, NamespaceImport } from 'typescript';
 import { ImportInfos, PluginType } from '../types/index';
 const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';

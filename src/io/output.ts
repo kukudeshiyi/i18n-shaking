@@ -17,7 +17,7 @@ export async function output(
   );
   try {
     const handleTranslateKeysJson = translateKeys.map((keysObj) =>
-      JSON.stringify(keysObj)
+      JSON.stringify(keysObj, null, 4)
     );
 
     await Promise.all(

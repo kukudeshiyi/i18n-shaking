@@ -1,12 +1,21 @@
 import { ConfigParams } from './types';
 import { OBJECT_FLAG } from './constants';
 import { handlePath, handleTranslateNames } from './handleConfigParams';
-import { PATH_CHECK_STATUS, PATH_TYPE, CONFIG_PARAMS } from './constants';
+import {
+  PATH_CHECK_STATUS,
+  PATH_TYPE,
+  CONFIG_PARAMS,
+  FRAME,
+} from './constants';
 
 export async function handleConfigParams(
   configParams: ConfigParams | undefined,
   rootPath?: string
-) {
+): Promise<{
+  status: boolean;
+  validateErrors: string[];
+  handleConfigParams: ConfigParams | null;
+}> {
   // 基础格式校验
   let validateStatus = true;
   const validateErrors = [];
@@ -31,6 +40,9 @@ export async function handleConfigParams(
     configParams![CONFIG_PARAMS.TRANSLATE_FILE_DIRECTORY_PATH];
   const translateFileNames = configParams![CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
   const importInfos = configParams![CONFIG_PARAMS.IMPORT_INFOS];
+  const frame = configParams![CONFIG_PARAMS.FRAME];
+
+  // TODO: 对于路径应该为 unknown
 
   // 对 entry 的校验处理
   const { status: handleEntryPathStatus, path: handleEntryPath } =
@@ -104,7 +116,7 @@ export async function handleConfigParams(
         expect: PATH_TYPE.FILE,
         rootPath,
       });
-      if (!status) {
+      if (status !== PATH_CHECK_STATUS.SUCCESS) {
         validateStatus = false;
         validateErrors.push(
           `The translation file with the filename ${translateFileNames[index]} in the ${CONFIG_PARAMS.TRANSLATE_FILE_NAMES} parameter was not found`
@@ -116,8 +128,9 @@ export async function handleConfigParams(
   // 对 importInfos 的校验处理
   if (
     !Array.isArray(importInfos) ||
+    importInfos.length === 0 ||
     !importInfos.every((importInfoItem) => {
-      return !!importInfoItem.name;
+      return typeof importInfoItem?.name === 'string';
     })
   ) {
     validateStatus = false;
@@ -126,15 +139,20 @@ export async function handleConfigParams(
     );
   }
 
+  // TODO:对 frame 的校验处理
+  // if (FRAME[frame]) {
+  // }
+
   return {
     status: validateStatus,
     validateErrors,
     handleConfigParams: {
-      ...configParams,
       entry: handleEntryPath,
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
       translateFileNames: handleTranslatePaths,
+      importInfos,
+      frame,
     },
   };
 }

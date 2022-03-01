@@ -1,11 +1,11 @@
 import ts from 'typescript';
-import { PluginType } from './types/index';
+import { ConfigParams, PluginType } from './types/index';
 import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
 import { readConfigFile } from './io';
 import { handleConfigParams as validateConfigParams } from './validateConfigParams';
 import { logMessages } from './utils';
-import { LOG_TYPE } from './constants';
+import { FRAME, LOG_TYPE } from './constants';
 import { runPlugins } from './runPlugins';
 import { shaking } from './shaking';
 
@@ -13,6 +13,8 @@ export async function i18nShaking(
   file: string[],
   options?: ts.CompilerOptions
 ) {
+  logMessages(['start shaking...'], LOG_TYPE.NORMAL);
+
   const configParams = await readConfigFile();
   if (!configParams) {
     return;
@@ -30,7 +32,6 @@ export async function i18nShaking(
     handleConfigParams!,
     options
   );
-
   shaking(results, warnings, handleConfigParams!);
 }
 
@@ -39,7 +40,7 @@ export async function i18nShakingForTest(
   options?: ts.CompilerOptions
 ) {
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
-  const configParam = {
+  const configParam: ConfigParams = {
     entry: '',
     translateFileDirectoryPath: '',
     translateFileNames: [''],
@@ -50,6 +51,7 @@ export async function i18nShakingForTest(
       { name: 't', path: 'i18n-t' }, // 匹配导出名以及导入路径
       { name: 'useTranslation', path: 'react-i18next' },
     ],
+    frame: FRAME.REACT,
   };
   return await runPlugins(file, allPlugins, configParam, options);
 }

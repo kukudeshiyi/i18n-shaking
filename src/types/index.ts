@@ -1,9 +1,7 @@
 import ts from 'typescript';
-import { PATH_TYPE } from '../constants';
+import { PATH_TYPE, FRAME } from '../constants';
 export interface PluginParseReturnValueType {
-  //结果集合
   results: string[];
-  //未识别集合
   warnings: string[];
 }
 export interface PluginType {
@@ -31,6 +29,7 @@ export interface ConfigParams {
   translateFileNames: string[];
   output: string;
   importInfos?: ImportInfos[];
+  frame: FRAME;
 }
 export interface TranslateKeyFileData {
   [key: string]: string;

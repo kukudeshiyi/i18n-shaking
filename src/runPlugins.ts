@@ -1,7 +1,19 @@
 import ts from 'typescript';
 import { PluginType, ConfigParams } from './types/index';
-const defaultOptions = {
-  jsx: ts.JsxEmit.ReactJSX,
+import { FRAME } from './constants';
+
+const getDefaultOptions = (frame: FRAME) => {
+  switch (frame) {
+    case FRAME.REACT_NATIVE:
+      return {
+        jsx: ts.JsxEmit.ReactNative,
+      };
+    case FRAME.REACT:
+    default:
+      return {
+        jsx: ts.JsxEmit.ReactJSX,
+      };
+  }
 };
 
 /**
@@ -18,9 +30,10 @@ export function runPlugins(
   configParams: ConfigParams,
   options?: ts.CompilerOptions
 ) {
+  const { entry, frame } = configParams;
   const program = ts.createProgram(
-    file,
-    Object.assign(defaultOptions, options)
+    entry ? [entry] : file,
+    Object.assign(getDefaultOptions(frame), options)
   );
 
   const sourceFiles = program.getSourceFiles().filter((sourceFile) => {

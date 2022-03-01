@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const sade = require('sade');
-const { i18nShaking } = require('./dist/index.js');
+const { i18nShaking } = require('./lib/index.js');
 const pkg = require('./package.json');
 
 sade('i18n-shaking [entry]', true)

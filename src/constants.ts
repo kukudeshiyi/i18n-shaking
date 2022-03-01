@@ -20,10 +20,17 @@ export enum CONFIG_PARAMS {
   TRANSLATE_FILE_NAMES = 'translateFileNames',
   OUTPUT = 'output',
   IMPORT_INFOS = 'importInfos',
+  FRAME = 'frame',
 }
 
 export enum LOG_TYPE {
   SUCCESS = 'green',
   ERROR = 'red',
   WARNING = 'yellow',
+  NORMAL = 'white',
+}
+
+export enum FRAME {
+  REACT = 'react',
+  REACT_NATIVE = 'react-native',
 }

@@ -32,6 +32,6 @@ export async function shaking(
   // TODO: warnings 如何进行处理
 
   status
-    ? logMessages([''], LOG_TYPE.SUCCESS)
-    : logMessages([''], LOG_TYPE.ERROR);
+    ? logMessages(['Success'], LOG_TYPE.SUCCESS)
+    : logMessages(['Failed'], LOG_TYPE.ERROR);
 }
