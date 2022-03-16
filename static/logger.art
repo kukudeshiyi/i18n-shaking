@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+      <div class="i18n-shaking-logger-wrapper">
+        <div class="source-files">
+          <h1>Source Files</h1>
+          {{each sourceFileNames value i}}
+          <p>{{i + 1}}:{{value}}</p>
+          {{/each}}
+        </div>
+        <div class="warnings">
+          <h1>Warnings</h1>
+          {{each warnings value i}}
+          <p>{{i + 1}}:{{value}}</p>
+          {{/each}}
+        </div>
+      </div>
+  </body>
+</html>

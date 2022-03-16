@@ -8,31 +8,49 @@ import { logMessages } from './utils';
 import { FRAME, LOG_TYPE } from './constants';
 import { runPlugins } from './runPlugins';
 import { shaking } from './shaking';
+import { outputLogger } from './logger';
 
-export async function i18nShaking(
-  file: string[],
-  options?: ts.CompilerOptions
-) {
+export async function i18nShaking() {
+  // TODO: 处理 cli 参数
   logMessages(['start shaking...'], LOG_TYPE.NORMAL);
 
   const configParams = await readConfigFile();
   if (!configParams) {
     return;
   }
-  const { status, validateErrors, handleConfigParams } =
+
+  const { status: validateStatus, handleConfigParams } =
     await validateConfigParams(configParams);
-  if (!status) {
-    logMessages(validateErrors, LOG_TYPE.ERROR);
+  if (!validateStatus) {
     return;
   }
-  const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
-  const { results, warnings } = runPlugins(
-    file,
+
+  const allPlugins = loadingPlugins(buildInPlugins);
+  const { results, warnings, fits, sourceFiles } = runPlugins(
     allPlugins,
-    handleConfigParams!,
-    options
+    handleConfigParams!
   );
-  shaking(results, warnings, handleConfigParams!);
+  if (results.length <= 0) {
+    return;
+  }
+
+  const shakingStatus = shaking(results, handleConfigParams!);
+
+  if (!shakingStatus) {
+    return;
+  }
+
+  logMessages(
+    [
+      'The processed translation key content has been output to the target folder',
+    ],
+    LOG_TYPE.SUCCESS
+  );
+
+  outputLogger({
+    sourceFileNames: sourceFiles.map((sourceFile) => sourceFile.fileName),
+    warnings,
+  });
 }
 
 export async function i18nShakingForTest(
@@ -41,7 +59,7 @@ export async function i18nShakingForTest(
 ) {
   const allPlugins: PluginType[] = loadingPlugins(buildInPlugins);
   const configParam: ConfigParams = {
-    entry: '',
+    entry: file,
     translateFileDirectoryPath: '',
     translateFileNames: [''],
     output: '',
@@ -53,5 +71,5 @@ export async function i18nShakingForTest(
     ],
     frame: FRAME.REACT,
   };
-  return await runPlugins(file, allPlugins, configParam, options);
+  return await runPlugins(allPlugins, configParam, options);
 }

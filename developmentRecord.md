@@ -31,8 +31,10 @@
 
 ### 待办事项
 
-1. 处理 shaking 模块的两个 TODO @liqi.shi
-2. 拆分 validateConfigParams 模块，细化校验，增加对于 frame 的校验，补充测试用例 @liqi.shi
-3. 补充 readme @liqi.shi
-4. 解决 plugin 类型问题 @yulong.xiang
-5. 整理 各个项目 cases，检查是否有遗漏 @liqi.shi @yulong.xiang
+1.  优化参数设计 @liqi.shi
+2.  增加对 node_modules 中 sourceFile 的过滤 @liqi.shi
+3.  处理 shaking 模块的关于 json 格式的校验以及 warnings 的信息处理 @liqi.shi
+4.  拆分 validateConfigParams 模块，细化校验，增加对于 frame 的校验，补充测试用例 @liqi.shi
+5.  补充 readme @liqi.shi
+6.  解决 plugin 类型问题 @yulong.xiang
+7.  整理 各个项目 cases，检查是否有遗漏 @liqi.shi @yulong.xiang

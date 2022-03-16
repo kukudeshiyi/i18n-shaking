@@ -1,6 +1,7 @@
 import ts from 'typescript';
 import { PluginType, ConfigParams } from './types/index';
-import { FRAME } from './constants';
+import { FRAME, LOG_TYPE } from './constants';
+import { logMessages } from './utils';
 
 const getDefaultOptions = (frame: FRAME) => {
   switch (frame) {
@@ -16,28 +17,22 @@ const getDefaultOptions = (frame: FRAME) => {
   }
 };
 
-/**
- * 运行插件
- * @param file 入口文件
- * @param allPlugins 插件列表
- * @param configParams 配置信息
- * @param options ts配置
- * @returns [Object] { results:结果集合, warnings:未识别集合, fits:适用于当前模块的变量名集合 }
- */
 export function runPlugins(
-  file: string[],
   allPlugins: PluginType[],
   configParams: ConfigParams,
   options?: ts.CompilerOptions
 ) {
   const { entry, frame } = configParams;
   const program = ts.createProgram(
-    entry ? [entry] : file,
+    entry,
     Object.assign(getDefaultOptions(frame), options)
   );
 
   const sourceFiles = program.getSourceFiles().filter((sourceFile) => {
-    return !sourceFile.isDeclarationFile;
+    return (
+      !sourceFile.isDeclarationFile &&
+      !sourceFile.fileName.includes('node_modules')
+    );
   });
 
   const results: string[] = [];
@@ -88,5 +83,12 @@ export function runPlugins(
     ts.forEachChild(node, visit);
   }
 
-  return { results, warnings, fits };
+  if (results.length <= 0) {
+    logMessages(
+      ['The static analysis result is empty, please check the configuration'],
+      LOG_TYPE.WARNING
+    );
+  }
+
+  return { results, warnings, fits, sourceFiles };
 }

@@ -24,7 +24,7 @@ export interface ImportInfos {
   path?: string;
 }
 export interface ConfigParams {
-  entry: string;
+  entry: string[];
   translateFileDirectoryPath: string;
   translateFileNames: string[];
   output: string;
@@ -40,4 +40,9 @@ export type FindKeys = Array<string>;
 export interface HandlePathOptions {
   expect: PATH_TYPE;
   rootPath?: string;
+}
+
+export interface LoggerData {
+  sourceFileNames: string[];
+  warnings: string[];
 }

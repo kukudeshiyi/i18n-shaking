@@ -2,36 +2,46 @@ import { FindKeys, ConfigParams } from './types/index';
 import { output, readTranslateKeyFile } from './io';
 import { filterTranslateKeyFile } from './filterTranslateKeyFile';
 import { logMessages } from './utils';
-import { LOG_TYPE } from './constants';
+import { LOG_TYPE, OBJECT_FLAG } from './constants';
 
-export async function shaking(
-  results: string[],
-  warnings: string[],
-  configParams: ConfigParams
-) {
+export async function shaking(results: string[], configParams: ConfigParams) {
   const findKeys: FindKeys = Array.from(new Set(results));
   const translateKeyFileData = await readTranslateKeyFile(configParams);
-  if (translateKeyFileData.length < 0) {
+  if (translateKeyFileData.length <= 0) {
     logMessages(
       [
         'Failed to read translation file, please check configuration and file content',
       ],
       LOG_TYPE.ERROR
     );
-    return;
+    return false;
   }
-  // TODO: 校验 json
+
+  if (
+    !translateKeyFileData.every(
+      (item) => Object.prototype.toString.apply(item) === OBJECT_FLAG
+    )
+  ) {
+    logMessages(
+      ['The content of the translation file is incorrect, please check'],
+      LOG_TYPE.ERROR
+    );
+    return false;
+  }
 
   const filterTranslateKeyFileData = filterTranslateKeyFile(
     findKeys,
     translateKeyFileData
   );
 
-  const status = await output(filterTranslateKeyFileData, configParams!);
+  // TODO: 增加对输出内容为空的检测
 
-  // TODO: warnings 如何进行处理
+  const outputStatus = await output(filterTranslateKeyFileData, configParams!);
 
-  status
-    ? logMessages(['Success'], LOG_TYPE.SUCCESS)
-    : logMessages(['Failed'], LOG_TYPE.ERROR);
+  if (!outputStatus) {
+    logMessages(['output failed'], LOG_TYPE.ERROR);
+    return false;
+  }
+
+  return true;
 }

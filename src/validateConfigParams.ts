@@ -1,61 +1,83 @@
-import { ConfigParams } from './types';
+//@ts-nocheck
+import { ConfigParams, ImportInfos } from './types';
 import { OBJECT_FLAG } from './constants';
 import { handlePath, handleTranslateNames } from './handleConfigParams';
 import {
-  PATH_CHECK_STATUS,
+  PARAMS_CHECK_STATUS,
   PATH_TYPE,
   CONFIG_PARAMS,
   FRAME,
+  LOG_TYPE,
 } from './constants';
+import { logMessages } from './utils';
 
 export async function handleConfigParams(
-  configParams: ConfigParams | undefined,
+  configParams: unknown,
   rootPath?: string
 ): Promise<{
   status: boolean;
-  validateErrors: string[];
   handleConfigParams: ConfigParams | null;
+  validateErrors: string[];
 }> {
   // 基础格式校验
   let validateStatus = true;
   const validateErrors = [];
-  const isObject =
-    Object.prototype.toString.apply(configParams) === OBJECT_FLAG;
+  const isObject = ((
+    configParams
+  ): configParams is { [key: string]: unknown } =>
+    Object.prototype.toString.apply(configParams) === OBJECT_FLAG)(
+    configParams
+  );
   if (!isObject) {
     validateStatus = false;
     validateErrors.push(
       'The content of the configuration file should be a json object!'
     );
+    logMessages(validateErrors, LOG_TYPE.ERROR);
     return {
       status: validateStatus,
-      validateErrors,
       handleConfigParams: null,
     };
   }
 
   // 获取参数
-  const entry = configParams![CONFIG_PARAMS.ENTRY];
-  const output = configParams![CONFIG_PARAMS.OUTPUT];
+  const entry = configParams[CONFIG_PARAMS.ENTRY];
+  const output = configParams[CONFIG_PARAMS.OUTPUT];
   const translateFileDirectoryPath =
-    configParams![CONFIG_PARAMS.TRANSLATE_FILE_DIRECTORY_PATH];
-  const translateFileNames = configParams![CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
-  const importInfos = configParams![CONFIG_PARAMS.IMPORT_INFOS];
-  const frame = configParams![CONFIG_PARAMS.FRAME];
+    configParams[CONFIG_PARAMS.TRANSLATE_FILE_DIRECTORY_PATH];
+  const translateFileNames = configParams[CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
+  const importInfos = configParams[CONFIG_PARAMS.IMPORT_INFOS];
+  const frame = configParams[CONFIG_PARAMS.FRAME];
 
-  // TODO: 对于路径应该为 unknown
-
-  // 对 entry 的校验处理
-  const { status: handleEntryPathStatus, path: handleEntryPath } =
-    await handlePath(entry, {
-      expect: PATH_TYPE.FILE,
-      rootPath,
-    });
-
-  if (handleEntryPathStatus !== PATH_CHECK_STATUS.SUCCESS) {
+  let handleEntryPaths: string[] = [];
+  if (
+    Array.isArray(entry) &&
+    entry.length > 0 &&
+    entry.every((pathItem) => typeof pathItem === 'string')
+  ) {
+    handleEntryPaths = await Promise.all(
+      entry.map(async (pathItem, index) => {
+        const { status, path } = await handlePath(pathItem, {
+          expect: PATH_TYPE.FILE,
+          rootPath,
+        });
+        if (status !== PARAMS_CHECK_STATUS.SUCCESS) {
+          validateStatus = false;
+          validateErrors.push(
+            createCheckConfigParamsErrorMessage(
+              status,
+              `${CONFIG_PARAMS.ENTRY}[${index}]` as CONFIG_PARAMS
+            )
+          );
+        }
+        return path;
+      })
+    );
+  } else {
     validateStatus = false;
     validateErrors.push(
       createCheckConfigParamsErrorMessage(
-        handleEntryPathStatus,
+        PARAMS_CHECK_STATUS.FAILED,
         CONFIG_PARAMS.ENTRY
       )
     );
@@ -63,12 +85,12 @@ export async function handleConfigParams(
 
   // 对 output 的校验处理
   const { status: handleOutputStatus, path: handleOutputPath } =
-    await handlePath(output, {
+    await handlePath(typeof output === 'string' ? output : '', {
       expect: PATH_TYPE.DIRECTORY,
       rootPath,
     });
 
-  if (handleOutputStatus !== PATH_CHECK_STATUS.SUCCESS) {
+  if (handleOutputStatus !== PARAMS_CHECK_STATUS.SUCCESS) {
     validateStatus = false;
     validateErrors.push(
       createCheckConfigParamsErrorMessage(
@@ -82,12 +104,17 @@ export async function handleConfigParams(
   const {
     status: handleTranslateFileDirectoryStatus,
     path: handleTranslateFileDirectoryPath,
-  } = await handlePath(translateFileDirectoryPath, {
-    expect: PATH_TYPE.DIRECTORY,
-    rootPath,
-  });
+  } = await handlePath(
+    typeof translateFileDirectoryPath === 'string'
+      ? translateFileDirectoryPath
+      : '',
+    {
+      expect: PATH_TYPE.DIRECTORY,
+      rootPath,
+    }
+  );
 
-  if (handleTranslateFileDirectoryStatus !== PATH_CHECK_STATUS.SUCCESS) {
+  if (handleTranslateFileDirectoryStatus !== PARAMS_CHECK_STATUS.SUCCESS) {
     validateStatus = false;
     validateErrors.push(
       createCheckConfigParamsErrorMessage(
@@ -98,34 +125,48 @@ export async function handleConfigParams(
   }
 
   // 对 translateFileNames 的校验处理
-  if (!Array.isArray(translateFileNames) || translateFileNames.length <= 0) {
-    validateStatus = false;
-    validateErrors.push(
-      `The ${CONFIG_PARAMS.TRANSLATE_FILE_NAMES} parameter is wrong, please check`
+  let handleTranslatePaths: string[] = [];
+  if (
+    handleTranslateFileDirectoryStatus === PARAMS_CHECK_STATUS.SUCCESS &&
+    Array.isArray(translateFileNames) &&
+    translateFileNames.length > 0 &&
+    translateFileNames.every((name) => typeof name === 'string')
+  ) {
+    handleTranslatePaths = await handleTranslateNames(
+      handleTranslateFileDirectoryPath,
+      translateFileNames
     );
+
+    await Promise.all(
+      handleTranslatePaths.map(async (handleTranslatePath, index) => {
+        const { status } = await handlePath(handleTranslatePath, {
+          expect: PATH_TYPE.FILE,
+          rootPath,
+        });
+        if (status !== PARAMS_CHECK_STATUS.SUCCESS) {
+          validateStatus = false;
+          validateErrors.push(
+            createCheckConfigParamsErrorMessage(
+              status,
+              `${CONFIG_PARAMS.TRANSLATE_FILE_NAMES}[${index}]` as CONFIG_PARAMS
+            )
+          );
+        }
+      })
+    );
+  } else {
+    validateStatus = false;
+    handleTranslateFileDirectoryStatus === PARAMS_CHECK_STATUS.SUCCESS &&
+      validateErrors.push(
+        createCheckConfigParamsErrorMessage(
+          PARAMS_CHECK_STATUS.FAILED,
+          CONFIG_PARAMS.TRANSLATE_FILE_NAMES
+        )
+      );
   }
 
-  const handleTranslatePaths = await handleTranslateNames(
-    handleTranslateFileDirectoryPath,
-    translateFileNames
-  );
-
-  await Promise.all(
-    handleTranslatePaths.map(async (handleTranslatePath, index) => {
-      const { status } = await handlePath(handleTranslatePath, {
-        expect: PATH_TYPE.FILE,
-        rootPath,
-      });
-      if (status !== PATH_CHECK_STATUS.SUCCESS) {
-        validateStatus = false;
-        validateErrors.push(
-          `The translation file with the filename ${translateFileNames[index]} in the ${CONFIG_PARAMS.TRANSLATE_FILE_NAMES} parameter was not found`
-        );
-      }
-    })
-  );
-
   // 对 importInfos 的校验处理
+  let handleImportInfos: ImportInfos[] = [];
   if (
     !Array.isArray(importInfos) ||
     importInfos.length === 0 ||
@@ -135,43 +176,67 @@ export async function handleConfigParams(
   ) {
     validateStatus = false;
     validateErrors.push(
-      `The ${CONFIG_PARAMS.IMPORT_INFOS} parameter is wrong, please check`
+      createCheckConfigParamsErrorMessage(
+        PARAMS_CHECK_STATUS.FAILED,
+        CONFIG_PARAMS.IMPORT_INFOS
+      )
     );
+  } else {
+    handleImportInfos = importInfos;
   }
 
-  // TODO:对 frame 的校验处理
-  // if (FRAME[frame]) {
-  // }
+  let handleFrame: FRAME = FRAME.REACT;
+
+  if (
+    typeof frame !== 'string' ||
+    //@ts-ignore
+    !Object.keys(FRAME).some((key) => FRAME[key] === frame)
+  ) {
+    validateStatus = false;
+    validateErrors.push(
+      createCheckConfigParamsErrorMessage(
+        PARAMS_CHECK_STATUS.FAILED,
+        CONFIG_PARAMS.FRAME
+      )
+    );
+  } else {
+    handleFrame = frame as FRAME;
+  }
+
+  if (!validateStatus) {
+    logMessages(validateErrors, LOG_TYPE.ERROR);
+  }
 
   return {
     status: validateStatus,
     validateErrors,
     handleConfigParams: {
-      entry: handleEntryPath,
+      entry: handleEntryPaths,
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
       translateFileNames: handleTranslatePaths,
-      importInfos,
-      frame,
+      importInfos: handleImportInfos,
+      frame: handleFrame,
     },
   };
 }
 
 export function createCheckConfigParamsErrorMessage(
-  pathCheckStatus: PATH_CHECK_STATUS,
+  pathCheckStatus: PARAMS_CHECK_STATUS,
   configParamsName: CONFIG_PARAMS
 ) {
   switch (pathCheckStatus) {
-    case PATH_CHECK_STATUS.FAILED_NOT_VALID:
+    case PARAMS_CHECK_STATUS.FAILED_NOT_VALID:
       return `The ${configParamsName} parameter configuration path is invalid, please check`;
-    case PATH_CHECK_STATUS.FAILED_NOT_FILE:
+    case PARAMS_CHECK_STATUS.FAILED_NOT_FILE:
       return `The ${configParamsName} parameter configuration path is not a file, please check`;
-    case PATH_CHECK_STATUS.FAILED_NOT_DIRECTORY:
+    case PARAMS_CHECK_STATUS.FAILED_NOT_DIRECTORY:
       return `The ${configParamsName} parameter configuration path is not a folder, please check`;
-    case PATH_CHECK_STATUS.FAILED_FILE_NOT_READABLE:
+    case PARAMS_CHECK_STATUS.FAILED_FILE_NOT_READABLE:
       return `The ${configParamsName} parameter configuration path is not an unreadable file, please check`;
-    case PATH_CHECK_STATUS.FAILED_FILE_NOT_WRITABLE:
+    case PARAMS_CHECK_STATUS.FAILED_FILE_NOT_WRITABLE:
       return `The ${configParamsName} parameter configuration path is not a non-writable file, please check`;
+    case PARAMS_CHECK_STATUS.FAILED:
     default:
       return `The ${configParamsName} parameter is wrong, please check`;
   }
