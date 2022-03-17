@@ -10,8 +10,8 @@ import { runPlugins } from './runPlugins';
 import { shaking } from './shaking';
 import { outputLogger } from './logger';
 
-export async function i18nShaking() {
-  // TODO: 处理 cli 参数
+export async function i18nShaking(options: { log: boolean }) {
+  const { log } = options;
   logMessages(['start shaking...'], LOG_TYPE.NORMAL);
 
   const configParams = await readConfigFile();
@@ -47,10 +47,11 @@ export async function i18nShaking() {
     LOG_TYPE.SUCCESS
   );
 
-  outputLogger({
-    sourceFileNames: sourceFiles.map((sourceFile) => sourceFile.fileName),
-    warnings,
-  });
+  log &&
+    outputLogger({
+      sourceFileNames: sourceFiles.map((sourceFile) => sourceFile.fileName),
+      warnings,
+    });
 }
 
 export async function i18nShakingForTest(
