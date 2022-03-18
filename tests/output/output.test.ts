@@ -7,17 +7,17 @@ import {
   case1,
 } from './__fixtures__/cases';
 import { ConfigParams } from '../../src/types/index';
-import { rmdir, mkdir } from 'fs/promises';
+import fs from 'fs';
 import { isValidPath } from '../../src/utils';
 
 let errorStatus = false;
 
 test.before.each(async () => {
   try {
-    await rmdir(TEST_OUTPUT_PATH, {
+    await fs.promises.rmdir(TEST_OUTPUT_PATH, {
       recursive: true,
     });
-    await mkdir(TEST_OUTPUT_PATH);
+    await fs.promises.mkdir(TEST_OUTPUT_PATH);
   } catch (e) {
     errorStatus = true;
   }

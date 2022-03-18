@@ -1,7 +1,7 @@
 import { TranslateKeyFileData, ConfigParams } from '../types/index';
 import { CONFIG_PARAMS } from '../constants';
 import { basename, join } from 'path';
-import { writeFile } from 'fs/promises';
+import fs from 'fs';
 
 export async function output(
   translateKeys: Array<TranslateKeyFileData>,
@@ -22,7 +22,10 @@ export async function output(
 
     await Promise.all(
       outputFilePaths.map(async (path, index) => {
-        return await writeFile(path, handleTranslateKeysJson[index]);
+        return await fs.promises.writeFile(
+          path,
+          handleTranslateKeysJson[index]
+        );
       })
     );
   } catch (e) {

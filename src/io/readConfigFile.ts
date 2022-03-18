@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
 import { ConfigParams } from '../types';
 import { CONFIG_FILE_NAME, LOG_TYPE } from '../constants';
@@ -10,9 +10,11 @@ export async function readConfigFile(
   const currentExecPath = process.cwd();
   configFilePath =
     configFilePath || path.join(currentExecPath, CONFIG_FILE_NAME);
-  const configJson = await readFile(configFilePath, 'utf8').catch((e) => {
-    logMessages(['config file not found'], LOG_TYPE.ERROR);
-  });
+  const configJson = await fs.promises
+    .readFile(configFilePath, 'utf8')
+    .catch((e) => {
+      logMessages(['config file not found'], LOG_TYPE.ERROR);
+    });
 
   if (!configJson) {
     return;

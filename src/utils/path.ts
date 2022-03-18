@@ -1,9 +1,10 @@
-import { access, stat } from 'fs/promises';
+import fs from 'fs';
 import { constants } from 'fs';
 import { isAbsolute } from 'path';
 
 export async function isValidPath(path: string) {
-  const isValid = await access(path)
+  const isValid = await fs.promises
+    .access(path)
     .then(() => {
       return true;
     })
@@ -15,7 +16,8 @@ export async function isValidPath(path: string) {
 }
 
 export async function isFileReadable(path: string) {
-  const isReadable = await access(path, constants.R_OK)
+  const isReadable = await fs.promises
+    .access(path, constants.R_OK)
     .then(() => {
       return true;
     })
@@ -27,7 +29,8 @@ export async function isFileReadable(path: string) {
 }
 
 export async function isFileWritable(path: string) {
-  const isWritable = await access(path, constants.W_OK)
+  const isWritable = await fs.promises
+    .access(path, constants.W_OK)
     .then(() => {
       return true;
     })
@@ -40,7 +43,7 @@ export async function isFileWritable(path: string) {
 
 export async function isDirectory(path: string) {
   try {
-    const isDirectory = await stat(path).then((stat) => {
+    const isDirectory = await fs.promises.stat(path).then((stat) => {
       return stat.isDirectory();
     });
     return isDirectory;
