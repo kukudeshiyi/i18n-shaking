@@ -40,4 +40,4 @@
 7.  整理 各个项目 cases，检查是否有遗漏 @liqi.shi @yulong.xiang
 8.  优化 output，不填默认覆盖源文件夹 @liqi.shi
 9.  优化 cli 对 pipeline 的支持 @liqi.shi done
-10. 支持翻译 key 白名单 @liqi.shi
+10. 支持翻译 key 白名单 @liqi.shi done
