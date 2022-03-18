@@ -1,6 +1,6 @@
 {
   "name": "i18n-shaking",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "filter i18n keys",
   "keywords": [
     "i18n",
@@ -17,6 +17,9 @@
     "prepare": "npm run build",
     "build": "tsc",
     "test": "uvu -r tsm tests test.ts"
+  },
+  "publishConfig": {
+    "registry": "https://npm.shopee.io/"
   },
   "repository": {
     "type": "git",
