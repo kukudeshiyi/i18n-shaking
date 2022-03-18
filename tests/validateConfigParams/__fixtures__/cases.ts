@@ -13,6 +13,7 @@ export const successCase = {
     { name: 't', path: 'i18n' },
   ],
   frame: 'react',
+  keyWhiteList: ['123'],
 };
 
 export const failedCase1 = {
@@ -27,6 +28,7 @@ export const failedCase1 = {
     { name: 123, path: 'i18n' },
   ],
   frame: 'react123',
+  keyWhiteList: [7],
 };
 
 export const failedCase2 = {
@@ -36,4 +38,5 @@ export const failedCase2 = {
   output: 123,
   importInfos: {},
   frame: 123,
+  keyWhiteList: 0,
 };

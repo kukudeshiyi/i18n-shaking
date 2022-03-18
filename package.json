@@ -2,12 +2,19 @@
   "name": "i18n-shaking",
   "version": "1.0.0",
   "description": "filter i18n keys",
+  "keywords": [
+    "i18n",
+    "shaking",
+    "filter",
+    "translation"
+  ],
   "main": "./lib/index.js",
   "bin": {
     "i18n-shaking": "./bin.js"
   },
   "type": "commonjs",
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc",
     "test": "uvu -r tsm tests test.ts"
   },
@@ -34,5 +41,6 @@
     "art-template": "^4.13.2",
     "chalk": "4.1.2",
     "sade": "^1.7.4"
-  }
+  },
+  "files": []
 }

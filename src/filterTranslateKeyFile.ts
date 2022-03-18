@@ -8,7 +8,7 @@ export function filterTranslateKeyFile(
       const filterTranslateKeyFileDataItem: TranslateKeyFileData = (lastValue[
         index
       ] = lastValue[index] || {});
-      const value: string = item[key];
+      const value: string = item[key] || '';
       if (value) {
         filterTranslateKeyFileDataItem[key] = value;
       }

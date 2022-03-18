@@ -24,12 +24,14 @@ test('the parameters are processed correctly and successfully', async () => {
     translateFileDirectoryPath,
     importInfos,
     frame,
+    keyWhiteList,
   } = handleParams!;
 
   assert.equal(output, join(rootPath, './output'));
   assert.equal(translateFileDirectoryPath, join(rootPath, './assert'));
   assert.equal(frame, successCase.frame);
   assert.equal(successCase.importInfos, importInfos);
+  assert.equal(successCase.keyWhiteList, keyWhiteList);
   successCase.entry.forEach((path, index) => {
     assert.equal(entry[index], join(rootPath, path));
   });
@@ -56,7 +58,7 @@ test('incorrect parameter content causes validation failure', async () => {
     validateErrors,
   } = await handleConfigParams(failedCase1);
   assert.equal(status, false);
-  assert.equal(validateErrors.length, 5);
+  assert.equal(validateErrors.length, 6);
   assert.type(handleParams, 'object');
 });
 
@@ -67,8 +69,15 @@ test('parameter format error causes validation failure', async () => {
     validateErrors,
   } = await handleConfigParams(failedCase2);
   assert.equal(status, false);
-  assert.equal(validateErrors.length, 5);
+  assert.equal(validateErrors.length, 6);
   assert.type(handleParams, 'object');
+});
+
+test('optional params', async () => {
+  delete successCase.keyWhiteList;
+  assert.equal(successCase.keyWhiteList, undefined);
+  const { status } = await handleConfigParams(successCase, rootPath);
+  assert.equal(status, true);
 });
 
 test.run();

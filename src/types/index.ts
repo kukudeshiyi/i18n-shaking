@@ -30,6 +30,7 @@ export interface ConfigParams {
   output: string;
   importInfos?: ImportInfos[];
   frame: FRAME;
+  keyWhiteList: string[];
 }
 export interface TranslateKeyFileData {
   [key: string]: string;

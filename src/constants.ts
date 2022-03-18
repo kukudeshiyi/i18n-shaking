@@ -22,6 +22,7 @@ export enum CONFIG_PARAMS {
   OUTPUT = 'output',
   IMPORT_INFOS = 'importInfos',
   FRAME = 'frame',
+  KEY_WHITE_LIST = 'keyWhiteList',
 }
 
 export enum LOG_TYPE {

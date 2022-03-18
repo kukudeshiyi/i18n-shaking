@@ -19,4 +19,7 @@ export const logMessages = (messages: string[], logType: LOG_TYPE) => {
     const handleMessage = getLogMessagesSuffix(logType) + message + '\n';
     console.log(chalk[logType](handleMessage));
   });
+  if (logType === LOG_TYPE.ERROR) {
+    process.exit(1);
+  }
 };

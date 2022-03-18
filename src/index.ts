@@ -26,7 +26,7 @@ export async function i18nShaking(options: { log: boolean }) {
   }
 
   const allPlugins = loadingPlugins(buildInPlugins);
-  const { results, warnings, fits, sourceFiles } = runPlugins(
+  const { results, warnings, sourceFiles } = runPlugins(
     allPlugins,
     handleConfigParams!
   );
@@ -35,7 +35,6 @@ export async function i18nShaking(options: { log: boolean }) {
   }
 
   const shakingStatus = shaking(results, handleConfigParams!);
-
   if (!shakingStatus) {
     return;
   }
@@ -71,6 +70,7 @@ export async function i18nShakingForTest(
       { name: 'useTranslation', path: 'react-i18next' },
     ],
     frame: FRAME.REACT,
+    keyWhiteList: [],
   };
   return await runPlugins(allPlugins, configParam, options);
 }

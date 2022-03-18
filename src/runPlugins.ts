@@ -22,7 +22,7 @@ export function runPlugins(
   configParams: ConfigParams,
   options?: ts.CompilerOptions
 ) {
-  const { entry, frame } = configParams;
+  const { entry, frame, keyWhiteList } = configParams;
   const program = ts.createProgram(
     entry,
     Object.assign(getDefaultOptions(frame), options)
@@ -35,7 +35,7 @@ export function runPlugins(
     );
   });
 
-  const results: string[] = [];
+  const results: string[] = [...keyWhiteList];
   const warnings: string[] = [];
   const fits: string[] = []; //适用于当前模块的变量名集合
   let currentSourceFilePlugins: PluginType[] = [];
@@ -86,7 +86,7 @@ export function runPlugins(
   if (results.length <= 0) {
     logMessages(
       ['The static analysis result is empty, please check the configuration'],
-      LOG_TYPE.WARNING
+      LOG_TYPE.ERROR
     );
   }
 

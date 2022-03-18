@@ -37,6 +37,7 @@ export async function handleConfigParams(
     return {
       status: validateStatus,
       handleConfigParams: null,
+      validateErrors,
     };
   }
 
@@ -48,6 +49,7 @@ export async function handleConfigParams(
   const translateFileNames = configParams[CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
   const importInfos = configParams[CONFIG_PARAMS.IMPORT_INFOS];
   const frame = configParams[CONFIG_PARAMS.FRAME];
+  const keyWhiteList = configParams[CONFIG_PARAMS.KEY_WHITE_LIST];
 
   let handleEntryPaths: string[] = [];
   if (
@@ -166,7 +168,6 @@ export async function handleConfigParams(
   }
 
   // 对 importInfos 的校验处理
-  let handleImportInfos: ImportInfos[] = [];
   if (
     !Array.isArray(importInfos) ||
     importInfos.length === 0 ||
@@ -181,12 +182,9 @@ export async function handleConfigParams(
         CONFIG_PARAMS.IMPORT_INFOS
       )
     );
-  } else {
-    handleImportInfos = importInfos;
   }
 
-  let handleFrame: FRAME = FRAME.REACT;
-
+  // 对 frame 进行校验
   if (
     typeof frame !== 'string' ||
     //@ts-ignore
@@ -199,8 +197,25 @@ export async function handleConfigParams(
         CONFIG_PARAMS.FRAME
       )
     );
-  } else {
-    handleFrame = frame as FRAME;
+  }
+
+  // 对 keyWhiteList 进行校验
+  let handleKeyWhiteList: string[] = [];
+  if (keyWhiteList !== undefined) {
+    if (
+      !Array.isArray(keyWhiteList) ||
+      !keyWhiteList.every((key) => typeof key === 'string')
+    ) {
+      validateStatus = false;
+      validateErrors.push(
+        createCheckConfigParamsErrorMessage(
+          PARAMS_CHECK_STATUS.FAILED,
+          CONFIG_PARAMS.KEY_WHITE_LIST
+        )
+      );
+    } else {
+      handleKeyWhiteList = keyWhiteList;
+    }
   }
 
   if (!validateStatus) {
@@ -215,8 +230,9 @@ export async function handleConfigParams(
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
       translateFileNames: handleTranslatePaths,
-      importInfos: handleImportInfos,
-      frame: handleFrame,
+      importInfos: importInfos as ImportInfos[],
+      frame: frame as FRAME,
+      keyWhiteList: handleKeyWhiteList,
     },
   };
 }
