@@ -1,5 +1,7 @@
 import typescript from 'rollup-plugin-typescript2';
 import replace from '@rollup/plugin-replace';
+import cleaner from 'rollup-plugin-cleaner';
+
 export default {
   input: 'src/index.ts',
   output: {
@@ -12,6 +14,9 @@ export default {
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
+    cleaner({
+      targets: ['./lib/'],
     }),
   ],
 };
