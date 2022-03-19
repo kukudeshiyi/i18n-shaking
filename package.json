@@ -15,8 +15,9 @@
   "type": "commonjs",
   "scripts": {
     "prepare": "npm run build",
-    "build": "tsc",
-    "test": "uvu -r tsm tests test.ts"
+    "build": "cross-env NODE_ENV=production && rollup --config rollup.config.ts",
+    "test": "cross-env NODE_ENV=dev && uvu -r tsm tests test.ts",
+    "rollup": ""
   },
   "publishConfig": {
     "registry": "https://npm.shopee.io/"
@@ -28,17 +29,22 @@
   "author": "liqi.shi",
   "license": "ISC",
   "devDependencies": {
+    "@rollup/plugin-replace": "^4.0.0",
+    "@types/node": "^16.11.10",
+    "@typescript-eslint/eslint-plugin": "^5.10.1",
+    "@typescript-eslint/parser": "^5.10.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "tslib": "^2.3.1",
+    "tsm": "^2.2.1",
     "tsup": "^5.9.1",
     "typescript": "^4.5.3",
-    "@types/node": "^16.11.10",
-    "tsm": "^2.2.1",
-    "uvu": "^0.5.2",
-    "@typescript-eslint/parser": "^5.10.1",
-    "@typescript-eslint/eslint-plugin": "^5.10.1",
-    "eslint": "^8.0.1",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.5.1"
+    "uvu": "^0.5.2"
   },
   "dependencies": {
     "art-template": "^4.13.2",
