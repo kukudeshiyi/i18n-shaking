@@ -43,7 +43,10 @@ export default function parseI18nPointT(): PluginType {
   const importIdentifierName: string[] = [];
   return {
     isFit: (node: ts.Node, sourceFile: ts.SourceFile, importInfos) => {
-      // 先给配置信息排个序
+      if (!(ts.isImportDeclaration(node) || ts.isVariableDeclaration(node))) {
+        return false;
+      }
+
       importInfos
         .sort((a, b) => {
           if (a.path && !b.path) {
@@ -57,12 +60,7 @@ export default function parseI18nPointT(): PluginType {
           }
           return 1;
         });
-      /**
-       * 从from获取导出
-       * @param node 节点
-       * @param fromSourceName 'i18n'
-       * @returns 导出对象名称
-       */
+
       const getI18nFunctionName = (node2: ts.Node): string => {
         const dealWithName = (
           _node: ts.ImportDeclaration,

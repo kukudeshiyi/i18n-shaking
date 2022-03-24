@@ -15,7 +15,7 @@ export interface PluginType {
     sourceFile: ts.SourceFile,
     program: ts.Program
   ) => PluginParseReturnValueType;
-  getImportNames: () => string[];
+  getImportNames?: () => string[];
   afterEachSourceFile?: () => void;
 }
 
