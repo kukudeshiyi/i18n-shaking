@@ -48,26 +48,24 @@ export function runPlugins(
     ts.forEachChild(sourceFile, visit);
     currentSourceFilePlugins.forEach((plugin) => {
       fits.length = 0;
-      fits.push(...plugin.getImportNames());
+      fits.push(...(plugin?.getImportNames?.() || []));
       plugin.afterEachSourceFile?.();
     });
   });
 
   function filterPlugins(node: ts.Node) {
-    if (ts.isImportDeclaration(node) || ts.isVariableDeclaration(node)) {
-      allPlugins.forEach((plugin) => {
-        if (
-          plugin.isFit(
-            node,
-            currentSourceFile!,
-            configParams.importInfos || []
-          ) &&
-          !currentSourceFilePlugins.includes(plugin)
-        ) {
-          currentSourceFilePlugins.push(plugin);
-        }
-      });
-    }
+    allPlugins.forEach((plugin) => {
+      if (
+        plugin.isFit(
+          node,
+          currentSourceFile!,
+          configParams.importInfos || []
+        ) &&
+        !currentSourceFilePlugins.includes(plugin)
+      ) {
+        currentSourceFilePlugins.push(plugin);
+      }
+    });
     ts.forEachChild(node, filterPlugins);
   }
 
