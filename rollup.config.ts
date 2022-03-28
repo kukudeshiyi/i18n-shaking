@@ -11,6 +11,11 @@ export default {
   plugins: [
     typescript({
       tsconfig: 'tsconfig.json',
+      tsconfigOverride: {
+        compilerOptions: {
+          module: 'ESNext',
+        },
+      },
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),

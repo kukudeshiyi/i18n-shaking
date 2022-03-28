@@ -1,5 +1,3 @@
-import path from 'path';
-
 export const rootPath = __dirname;
 
 export const successCase = {
@@ -7,7 +5,7 @@ export const successCase = {
   translateFileNames: ['en.json', 'other.json'],
   translateFileDirectoryPath: './assert',
   output: './output',
-  importInfos: [
+  pattern: [
     { name: 'i18n', path: '' },
     { name: 'trans', path: 'i18nt' },
     { name: 't', path: 'i18n' },
@@ -21,7 +19,7 @@ export const failedCase1 = {
   translateFileNames: ['en.json', 'other.json', 'none.json'],
   translateFileDirectoryPath: './assert',
   output: './noneOutput',
-  importInfos: [
+  pattern: [
     { name: 'i18n', path: '' },
     { name: 'trans', path: 'i18nt' },
     { name: '', path: 'i18n' },
@@ -36,7 +34,7 @@ export const failedCase2 = {
   translateFileNames: ['en.json', 'other.json', 'none.json'],
   translateFileDirectoryPath: 123,
   output: 123,
-  importInfos: {},
+  pattern: {},
   frame: 123,
   keyWhiteList: 0,
 };

@@ -20,7 +20,7 @@ export enum CONFIG_PARAMS {
   TRANSLATE_FILE_DIRECTORY_PATH = 'translateFileDirectoryPath',
   TRANSLATE_FILE_NAMES = 'translateFileNames',
   OUTPUT = 'output',
-  IMPORT_INFOS = 'importInfos',
+  PATTERN = 'pattern',
   FRAME = 'frame',
   KEY_WHITE_LIST = 'keyWhiteList',
 }
@@ -35,4 +35,14 @@ export enum LOG_TYPE {
 export enum FRAME {
   REACT = 'react',
   REACT_NATIVE = 'react-native',
+}
+
+export const ERROR_MSG_FUNCTION_PARAMS_ERROR =
+  'The parameters of the i18n.t function are not completely static string literals and cannot be completely statically analyzed. Please check and add them manually';
+export const ERROR_MSG_TERNARY_EXPRESSION_ERROR =
+  'Existence of ternary expression non-static string literal, please check and add manually';
+
+export enum IMPORT_DECLARATION_IMPORT_CLAUSE_TYPE {
+  NAME = 1,
+  NAMED_BINDINGS = 2,
 }
