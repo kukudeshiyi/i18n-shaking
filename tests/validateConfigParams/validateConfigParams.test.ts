@@ -22,7 +22,7 @@ test('the parameters are processed correctly and successfully', async () => {
     translateFileNames,
     output,
     translateFileDirectoryPath,
-    importInfos,
+    pattern,
     frame,
     keyWhiteList,
   } = handleParams!;
@@ -30,7 +30,7 @@ test('the parameters are processed correctly and successfully', async () => {
   assert.equal(output, join(rootPath, './output'));
   assert.equal(translateFileDirectoryPath, join(rootPath, './assert'));
   assert.equal(frame, successCase.frame);
-  assert.equal(successCase.importInfos, importInfos);
+  assert.equal(successCase.pattern, pattern);
   assert.equal(successCase.keyWhiteList, keyWhiteList);
   successCase.entry.forEach((path, index) => {
     assert.equal(entry[index], join(rootPath, path));

@@ -1,6 +1,6 @@
 //@ts-nocheck
 import ts, { NamedImports, NamespaceImport } from 'typescript';
-import { ImportInfos, PluginType } from '../types/index';
+import { Pattern, PluginType } from '../types/index';
 const EXPRESSION_NODE_ESCAPED_TEXT = 'i18n';
 const NAME_NODE_ESCAPED_TEXT = 't';
 const ERROR_MSG_ONE =
@@ -42,12 +42,12 @@ function stringConcatenation(
 export default function parseI18nPointT(): PluginType {
   const importIdentifierName: string[] = [];
   return {
-    isFit: (node: ts.Node, sourceFile: ts.SourceFile, importInfos) => {
+    isFit: (node: ts.Node, sourceFile: ts.SourceFile, pattern) => {
       if (!(ts.isImportDeclaration(node) || ts.isVariableDeclaration(node))) {
         return false;
       }
 
-      importInfos
+      pattern
         .sort((a, b) => {
           if (a.path && !b.path) {
             return -1;
@@ -64,7 +64,7 @@ export default function parseI18nPointT(): PluginType {
       const getI18nFunctionName = (node2: ts.Node): string => {
         const dealWithName = (
           _node: ts.ImportDeclaration,
-          _element: ImportInfos
+          _element: Pattern
         ) => {
           if (_node.importClause?.namedBindings) {
             try {
@@ -92,9 +92,9 @@ export default function parseI18nPointT(): PluginType {
           }
         };
         if (ts.isImportDeclaration(node2)) {
-          if (importInfos && importInfos.length > 0) {
-            for (let index = 0; index < importInfos.length; index++) {
-              const element = importInfos[index];
+          if (pattern && pattern.length > 0) {
+            for (let index = 0; index < pattern.length; index++) {
+              const element = pattern[index];
 
               // 有path和name
               if (element.path && element.name) {

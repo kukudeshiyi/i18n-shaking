@@ -56,11 +56,7 @@ export function runPlugins(
   function filterPlugins(node: ts.Node) {
     allPlugins.forEach((plugin) => {
       if (
-        plugin.isFit(
-          node,
-          currentSourceFile!,
-          configParams.importInfos || []
-        ) &&
+        plugin.isFit(node, currentSourceFile!, configParams.pattern || []) &&
         !currentSourceFilePlugins.includes(plugin)
       ) {
         currentSourceFilePlugins.push(plugin);

@@ -1,5 +1,4 @@
-//@ts-nocheck
-import { ConfigParams, ImportInfos } from './types';
+import { ConfigParams, Pattern } from './types';
 import { OBJECT_FLAG } from './constants';
 import { handlePath, handleTranslateNames } from './handleConfigParams';
 import {
@@ -47,7 +46,7 @@ export async function handleConfigParams(
   const translateFileDirectoryPath =
     configParams[CONFIG_PARAMS.TRANSLATE_FILE_DIRECTORY_PATH];
   const translateFileNames = configParams[CONFIG_PARAMS.TRANSLATE_FILE_NAMES];
-  const importInfos = configParams[CONFIG_PARAMS.IMPORT_INFOS];
+  const pattern = configParams[CONFIG_PARAMS.PATTERN];
   const frame = configParams[CONFIG_PARAMS.FRAME];
   const keyWhiteList = configParams[CONFIG_PARAMS.KEY_WHITE_LIST];
 
@@ -167,19 +166,19 @@ export async function handleConfigParams(
       );
   }
 
-  // 对 importInfos 的校验处理
+  // 对 pattern 的校验处理
   if (
-    !Array.isArray(importInfos) ||
-    importInfos.length === 0 ||
-    !importInfos.every((importInfoItem) => {
-      return typeof importInfoItem?.name === 'string';
+    !Array.isArray(pattern) ||
+    pattern.length === 0 ||
+    !pattern.every((patternItem) => {
+      return typeof patternItem?.name === 'string';
     })
   ) {
     validateStatus = false;
     validateErrors.push(
       createCheckConfigParamsErrorMessage(
         PARAMS_CHECK_STATUS.FAILED,
-        CONFIG_PARAMS.IMPORT_INFOS
+        CONFIG_PARAMS.PATTERN
       )
     );
   }
@@ -230,7 +229,7 @@ export async function handleConfigParams(
       output: handleOutputPath,
       translateFileDirectoryPath: handleTranslateFileDirectoryPath,
       translateFileNames: handleTranslatePaths,
-      importInfos: importInfos as ImportInfos[],
+      pattern: pattern as Pattern[],
       frame: frame as FRAME,
       keyWhiteList: handleKeyWhiteList,
     },

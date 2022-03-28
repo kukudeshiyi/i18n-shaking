@@ -8,7 +8,7 @@ export interface PluginType {
   isFit: (
     node: ts.Node,
     sourceFile: ts.SourceFile,
-    importInfos: ImportInfos[]
+    pattern: Pattern[]
   ) => boolean;
   parse: (
     node: ts.Node,
@@ -19,7 +19,7 @@ export interface PluginType {
   afterEachSourceFile?: () => void;
 }
 
-export interface ImportInfos {
+export interface Pattern {
   name: string;
   path?: string;
 }
@@ -28,7 +28,7 @@ export interface ConfigParams {
   translateFileDirectoryPath: string;
   translateFileNames: string[];
   output: string;
-  importInfos?: ImportInfos[];
+  pattern?: Pattern[];
   frame: FRAME;
   keyWhiteList: string[];
 }
@@ -46,4 +46,12 @@ export interface HandlePathOptions {
 export interface LoggerData {
   sourceFileNames: string[];
   warnings: string[];
+}
+
+export interface ImportDeclarationNodeInfo {
+  moduleNames: Array<{
+    moduleName: string;
+    moduleAsName?: string;
+  }>;
+  path: string;
 }

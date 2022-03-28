@@ -63,7 +63,7 @@ export async function i18nShakingForTest(
     translateFileDirectoryPath: '',
     translateFileNames: [''],
     output: '',
-    importInfos: [
+    pattern: [
       { name: 'i18n', path: '' }, // 匹配-导出名
       { name: '', path: 'i18nDir' }, // 匹配-导入路径
       { name: 't', path: 'i18n-t' }, // 匹配导出名以及导入路径

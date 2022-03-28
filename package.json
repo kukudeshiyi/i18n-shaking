@@ -16,8 +16,12 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "cross-env NODE_ENV=production && rollup --config rollup.config.ts",
-    "test": "cross-env NODE_ENV=dev && uvu -r tsm tests test.ts",
-    "rollup": ""
+    "test": "cross-env NODE_ENV=dev && uvu -r tsm tests test.ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test"
+    }
   },
   "publishConfig": {
     "registry": "https://npm.shopee.io/"
@@ -37,6 +41,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
     "prettier": "^2.5.1",
     "rollup": "^2.70.1",
     "rollup-plugin-cleaner": "^1.0.0",
