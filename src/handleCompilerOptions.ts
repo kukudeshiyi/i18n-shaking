@@ -20,8 +20,10 @@ export function handleCompilerOptions(
   configParams: ConfigParams
 ): ts.CompilerOptions {
   const { frame } = configParams;
+  const baseUrl = compilerOptions.baseUrl;
   const paths = compilerOptions.paths;
   return {
+    baseUrl,
     paths,
     ...getFrameOption(frame),
   };
