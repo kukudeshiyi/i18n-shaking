@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "ESNext",
+    "lib": ["es2015"],
+    "allowJs": true,
+    "jsx": "react-native",
+    "noEmit": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "paths": {
+      "~/*": ["./*"],
+      "@shopee-rn/promotion/*": ["./src/*"],
+      "@shopee-rn/promotion/assets/*": ["./assets/*"],
+      "@react-native-async-storage/async-storage": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@react-native-async-storage/async-storage"
+      ],
+      "@react-native-community/cameraroll": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@react-native-community/cameraroll"
+      ],
+      "@react-native-community/clipboard": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@react-native-community/clipboard"
+      ],
+      "@react-native-community/netinfo": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@react-native-community/netinfo"
+      ],
+      "@react-native-community/viewpager": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@react-native-community/viewpager"
+      ],
+      "@shopee/react-native-sdk": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/@shopee/react-native-sdk"
+      ],
+      "react": ["/Users/shopee/spc-react-native-id/host/node_modules/react"],
+      "react-native": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/react-native"
+      ],
+      "react-native-svg": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/react-native-svg"
+      ],
+      "react-redux": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/react-redux"
+      ],
+      "redux": ["/Users/shopee/spc-react-native-id/host/node_modules/redux"],
+      "redux-thunk": [
+        "/Users/shopee/spc-react-native-id/host/node_modules/redux-thunk"
+      ]
+    }
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"]
+}
