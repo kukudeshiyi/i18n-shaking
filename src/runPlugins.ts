@@ -3,30 +3,13 @@ import { PluginType, ConfigParams } from './types/index';
 import { FRAME, LOG_TYPE } from './constants';
 import { logMessages } from './utils';
 
-const getDefaultOptions = (frame: FRAME) => {
-  switch (frame) {
-    case FRAME.REACT_NATIVE:
-      return {
-        jsx: ts.JsxEmit.ReactNative,
-      };
-    case FRAME.REACT:
-    default:
-      return {
-        jsx: ts.JsxEmit.ReactJSX,
-      };
-  }
-};
-
 export function runPlugins(
   allPlugins: PluginType[],
   configParams: ConfigParams,
   options?: ts.CompilerOptions
 ) {
-  const { entry, frame, keyWhiteList } = configParams;
-  const program = ts.createProgram(
-    entry,
-    Object.assign(getDefaultOptions(frame), options)
-  );
+  const { entry, keyWhiteList } = configParams;
+  const program = ts.createProgram(entry, options || {});
 
   const sourceFiles = program.getSourceFiles().filter((sourceFile) => {
     return (

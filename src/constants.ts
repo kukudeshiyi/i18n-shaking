@@ -1,4 +1,5 @@
 export const CONFIG_FILE_NAME = 'i18nShaking.config.json';
+export const TS_CONFIG_FILE_NAME = 'tsconfig.json';
 export const OBJECT_FLAG = '[object Object]';
 export enum PATH_TYPE {
   FILE = 1,

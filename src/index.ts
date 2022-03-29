@@ -2,13 +2,14 @@ import ts from 'typescript';
 import { ConfigParams, PluginType } from './types/index';
 import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
-import { readConfigFile } from './io';
+import { readConfigFile, readTsConfig } from './io';
 import { handleConfigParams as validateConfigParams } from './validateConfigParams';
 import { logMessages } from './utils';
 import { FRAME, LOG_TYPE } from './constants';
 import { runPlugins } from './runPlugins';
 import { shaking } from './shaking';
 import { outputLogger } from './logger';
+import { handleCompilerOptions } from './handleCompilerOptions';
 
 export async function i18nShaking(options: { log: boolean }) {
   const { log } = options;
@@ -21,14 +22,16 @@ export async function i18nShaking(options: { log: boolean }) {
 
   const { status: validateStatus, handleConfigParams } =
     await validateConfigParams(configParams);
-  if (!validateStatus) {
+  if (!validateStatus || !handleConfigParams) {
     return;
   }
 
   const allPlugins = loadingPlugins(buildInPlugins);
+  const projectTsConfigCompilerOptions = await readTsConfig();
   const { results, warnings, sourceFiles } = runPlugins(
     allPlugins,
-    handleConfigParams!
+    handleConfigParams,
+    handleCompilerOptions(projectTsConfigCompilerOptions, handleConfigParams)
   );
   if (results.length <= 0) {
     return;
