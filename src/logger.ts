@@ -4,20 +4,13 @@ import { LOG_TYPE } from './constants';
 import artTemplate from 'art-template';
 import { join } from 'path';
 import chalk from 'chalk';
-import { LoggerData } from './types/index';
+import { LogData } from './types';
 
 const PORT = '8888';
 
-async function createLoggerHtml({ sourceFileNames, warnings }: LoggerData) {
-  try {
-    const html = artTemplate(join(__dirname, '../static/logger.art'), {
-      sourceFileNames,
-      warnings,
-    });
-    return html;
-  } catch (e) {
-    return '';
-  }
+async function createLoggerHtml(logData: LogData) {
+  const html = artTemplate(join(__dirname, '../static/logger.art'), logData);
+  return html;
 }
 
 async function createLoggerSever(html: string) {
@@ -44,15 +37,15 @@ async function createLoggerSever(html: string) {
   });
 }
 
-export async function outputLogger(loggerData: LoggerData) {
+export async function outputLogger(logData: LogData) {
   try {
-    const html = await createLoggerHtml(loggerData);
+    const html = await createLoggerHtml(logData);
     await createLoggerSever(html);
   } catch (e) {
     logMessages(
       [
         '\nSourceFiles:',
-        ...loggerData.sourceFileNames.map(
+        ...logData.sourceFiles.map(
           (sourceFileName, index) => `${index + 1}: ${sourceFileName}`
         ),
       ],
@@ -61,9 +54,7 @@ export async function outputLogger(loggerData: LoggerData) {
     logMessages(
       [
         '\nWarnings:',
-        ...loggerData.warnings.map(
-          (warning, index) => `${index + 1}: ${warning}`
-        ),
+        ...logData.warnings.map((warning, index) => `${index + 1}: ${warning}`),
       ],
       LOG_TYPE.WARNING
     );

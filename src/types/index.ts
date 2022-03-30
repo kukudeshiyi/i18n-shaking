@@ -33,7 +33,7 @@ export interface ConfigParams {
   keyWhiteList: string[];
 }
 export interface TranslateKeyFileData {
-  [key: string]: string;
+  [key: string]: unknown;
 }
 
 export type FindKeys = Array<string>;
@@ -54,4 +54,18 @@ export interface ImportDeclarationNodeInfo {
     moduleAsName?: string;
   }>;
   path: string;
+}
+
+export interface LogData {
+  sourceFiles: string[];
+  warnings: string[];
+  keyWhiteList: string[];
+  parseResults: string[];
+  outputResults: string[];
+  compareResults: string[];
+  sourceFilesInfo: Array<{
+    warnings: string[];
+    keys: string[];
+    sourceFile: string;
+  }>;
 }
