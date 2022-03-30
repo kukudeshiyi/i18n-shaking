@@ -10,6 +10,7 @@ import { runPlugins } from './runPlugins';
 import { shaking } from './shaking';
 import { outputLogger } from './logger';
 import { handleCompilerOptions } from './handleCompilerOptions';
+import { handleLogData } from './handleLogData';
 
 export async function i18nShaking(options: { log: boolean }) {
   const { log } = options;
@@ -28,7 +29,7 @@ export async function i18nShaking(options: { log: boolean }) {
 
   const allPlugins = loadingPlugins(buildInPlugins);
   const projectTsConfigCompilerOptions = await readTsConfig();
-  const { results, warnings, sourceFiles } = runPlugins(
+  const { results, sourceFiles, warnings, sourceFilesInfo } = runPlugins(
     allPlugins,
     handleConfigParams,
     handleCompilerOptions(projectTsConfigCompilerOptions, handleConfigParams)
@@ -37,7 +38,10 @@ export async function i18nShaking(options: { log: boolean }) {
     return;
   }
 
-  const shakingStatus = shaking(results, handleConfigParams!);
+  const { status: shakingStatus, outputKeys } = await shaking(
+    results,
+    handleConfigParams!
+  );
   if (!shakingStatus) {
     return;
   }
@@ -49,11 +53,16 @@ export async function i18nShaking(options: { log: boolean }) {
     LOG_TYPE.SUCCESS
   );
 
-  log &&
-    outputLogger({
-      sourceFileNames: sourceFiles.map((sourceFile) => sourceFile.fileName),
-      warnings,
-    });
+  const logData = handleLogData(
+    handleConfigParams,
+    sourceFiles,
+    warnings,
+    sourceFilesInfo,
+    results,
+    outputKeys
+  );
+
+  log && outputLogger(logData);
 }
 
 export async function i18nShakingForTest(

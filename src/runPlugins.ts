@@ -1,6 +1,6 @@
 import ts from 'typescript';
-import { PluginType, ConfigParams } from './types/index';
-import { FRAME, LOG_TYPE } from './constants';
+import { PluginType, ConfigParams, LogData } from './types';
+import { LOG_TYPE } from './constants';
 import { logMessages } from './utils';
 
 export function runPlugins(
@@ -18,17 +18,32 @@ export function runPlugins(
     );
   });
 
+  const sourceFilesInfo: LogData['sourceFilesInfo'] = [];
+
   const results: string[] = [...keyWhiteList];
   const warnings: string[] = [];
   const fits: string[] = []; //适用于当前模块的变量名集合
   let currentSourceFilePlugins: PluginType[] = [];
   let currentSourceFile: ts.SourceFile | null = null;
+  let currentResultLength = results.length;
+  let currentWarningsLength = warnings.length;
 
   sourceFiles.forEach((sourceFile) => {
+    currentResultLength = results.length;
+    currentWarningsLength = warnings.length;
     currentSourceFile = sourceFile;
     currentSourceFilePlugins = [];
+
     ts.forEachChild(sourceFile, filterPlugins);
     ts.forEachChild(sourceFile, visit);
+
+    sourceFilesInfo.push({
+      keys: results.slice(currentResultLength),
+      warnings: warnings.slice(currentWarningsLength),
+      sourceFile:
+        currentSourceFile?.fileName || 'not_found_sourcefile_name_please_check',
+    });
+
     currentSourceFilePlugins.forEach((plugin) => {
       fits.length = 0;
       fits.push(...(plugin?.getImportNames?.() || []));
@@ -67,5 +82,13 @@ export function runPlugins(
     );
   }
 
-  return { results, warnings, fits, sourceFiles };
+  const handleResult = Array.from(new Set(results));
+
+  return {
+    results: handleResult,
+    warnings,
+    fits,
+    sourceFiles,
+    sourceFilesInfo,
+  };
 }
