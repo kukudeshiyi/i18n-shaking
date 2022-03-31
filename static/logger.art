@@ -8,20 +8,27 @@
   </head>
   <body>
       <div class="i18n-shaking-logger-wrapper">
-        <div class="source-files">
-          <h1>Source Files</h1>
+        <div id="list">
+          <h1>Contents</h1>
+          <p>1:<a href="#source-file">Source Files</a></p>
+          <p>2:<a href="#warnings">Warnings</a></p>
+          <p>3:<a href="#source-files-info">Source Files Info</a></p>
+          <p>4:<a href="#shaking-result">Result</a></p>
+        </div>
+        <div id="source-files">
+          <h1>1、Source Files</h1>
           {{each sourceFiles value i}}
           <p><a href={{"#"+value}}>{{i + 1}}:{{value}}</a></p>
           {{/each}}
         </div>
-        <div class="warnings">
-          <h1>Warnings</h1>
+        <div id="warnings">
+          <h1>2、Warnings</h1>
           {{each warnings value i}}
           <p>{{i + 1}}:{{value}}</p>
           {{/each}}
         </div>
-        <div class="source-files-info">
-          <h1>Source Files Info</h1>
+        <div id="source-files-info">
+          <h1>3、Source Files Info</h1>
           {{each sourceFilesInfo value i}}
           <p>
             <h3 id={{value.sourceFile}}>{{i+1}}:{{value.sourceFile}}</h3>
@@ -36,8 +43,8 @@
           </p>
           {{/each}}
         </div>
-        <div class="shaking-result">
-          <h1>Result</h1>
+        <div id="shaking-result">
+          <h1>4、Result</h1>
           <h3>White List</h3>
           {{each keyWhiteList value i}}
             <p>{{i+1}}:{{value}}</p>

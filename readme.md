@@ -158,6 +158,24 @@ export function thisIsKey(key:string){
 
 这样就可以对封装起来的 key 进行解析了。
 
-## 开发
+# 日志信息
+
+- 工具添加了 **--log** 参数，则在流程结束后启动本地服务，用户访问本地服务可以获取到工具运行报告。本地端口默认为**8888**，如果其他服务已经占用，默认会将日志输出至终端，考虑到终端阅读体验不佳，会对日志信息做精简处理。
+  ![](./mdImage/terminal_log.jpg)
+
+- 访问服务，你可以得到如下一份运行报告，如 Contents 所示，报告共分为 **Source Files**、**Warnings**、**Source Files Info**、**Result** 四项。下面会对每一项作出解释。
+  ![](./mdImage/html_report.jpg)
+- Source Files:工具解析到的项目文件（已经去除 node_modules 以及类型声明文件），点击每个文件可跳转查看详情信息。
+  ![](./mdImage/source_files.jpg)
+- Warnings:对项目中无法进行静态分析的运行时变量做出提示，提示包含文件路径、行列信息、具体原因。
+  ![](./mdImage/warnings.jpg)
+- Source Files Info:每个文件分析到的具体信息。包含分析到 key 以及无法分析的 warning 信息。
+  ![](./mdImage/source_files_info.jpg)
+- Results: 工具最终分析结果，包含用户配置的 key 白名单、工具分析出的结果、实际输出的结果（若原翻译文件不存在 key，则实际输出会比分析出的要少）、分析结果相较于输出结果的差异。
+  ![](./mdImage/results.jpg)
+  ![](./mdImage/results1.jpg)
+  ![](./mdImage/results2.jpg)
+
+# 开发
 
 待完善
