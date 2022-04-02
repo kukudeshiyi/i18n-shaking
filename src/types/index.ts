@@ -28,7 +28,7 @@ export interface ConfigParams {
   translateFileDirectoryPath: string;
   translateFileNames: string[];
   output: string;
-  pattern?: Pattern[];
+  pattern: Pattern[];
   frame: FRAME;
   keyWhiteList: string[];
 }

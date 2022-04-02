@@ -1,4 +1,4 @@
-import { LogData, ConfigParams } from './types';
+import { LogData, ConfigParams, TranslateKeyFileData } from './types';
 import ts from 'typescript';
 
 export function handleLogData(
@@ -7,9 +7,10 @@ export function handleLogData(
   warnings: string[],
   sourceFilesInfo: LogData['sourceFilesInfo'],
   parseResults: string[],
-  outputResults: string[]
+  filterTranslateKeyFileData: TranslateKeyFileData[]
 ): LogData {
   const { keyWhiteList } = configParams;
+  const outputResults = Object.keys(filterTranslateKeyFileData[0]);
   return {
     sourceFiles: sourceFiles.map((sourceFile) => sourceFile.fileName),
     warnings,

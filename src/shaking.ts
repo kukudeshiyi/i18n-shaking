@@ -1,5 +1,5 @@
 import { ConfigParams } from './types/index';
-import { output, readTranslateKeyFile } from './io';
+import { readTranslateKeyFile } from './io';
 import { filterTranslateKeyFile } from './filterTranslateKeyFile';
 import { logMessages } from './utils';
 import { LOG_TYPE, OBJECT_FLAG } from './constants';
@@ -18,10 +18,7 @@ export async function shaking(results: string[], configParams: ConfigParams) {
       ],
       LOG_TYPE.ERROR
     );
-    return {
-      status: false,
-      outputKeys: [],
-    };
+    return [];
   }
 
   if (
@@ -33,10 +30,7 @@ export async function shaking(results: string[], configParams: ConfigParams) {
       ['The content of the translation file is incorrect, please check'],
       LOG_TYPE.ERROR
     );
-    return {
-      status: false,
-      outputKeys: [],
-    };
+    return [];
   }
 
   const filterTranslateKeyFileData = filterTranslateKeyFile(
@@ -44,20 +38,5 @@ export async function shaking(results: string[], configParams: ConfigParams) {
     translateKeyFileData
   );
 
-  const outputKeys = Object.keys(filterTranslateKeyFileData[0] || {});
-
-  const outputStatus = await output(filterTranslateKeyFileData, configParams!);
-
-  if (!outputStatus) {
-    logMessages(['output failed'], LOG_TYPE.ERROR);
-    return {
-      status: false,
-      outputKeys,
-    };
-  }
-
-  return {
-    status: true,
-    outputKeys,
-  };
+  return filterTranslateKeyFileData;
 }
