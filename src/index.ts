@@ -47,13 +47,11 @@ export async function i18nShaking(options: { log: boolean }) {
     return;
   }
 
-  // check 输出各个文件的 key 的个数是否相等，错误等级为 Errors
   const checkStatus = check(filterTranslateKeyFileData);
   if (!checkStatus) {
     return;
   }
 
-  // output
   const outputStatus = await output(
     filterTranslateKeyFileData,
     handleConfigParams
