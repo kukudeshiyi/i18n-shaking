@@ -2,7 +2,7 @@ import ts from 'typescript';
 import { ConfigParams, PluginType } from './types/index';
 import { loadingPlugins } from './loadingPlugins';
 import buildInPlugins from './plugins';
-import { readConfigFile, readTsConfig } from './io';
+import { readConfigFile, readTsConfig, output } from './io';
 import { handleConfigParams as validateConfigParams } from './validateConfigParams';
 import { logMessages } from './utils';
 import { FRAME, LOG_TYPE } from './constants';
@@ -11,6 +11,7 @@ import { shaking } from './shaking';
 import { outputLogger } from './logger';
 import { handleCompilerOptions } from './handleCompilerOptions';
 import { handleLogData } from './handleLogData';
+import { check } from './check';
 
 export async function i18nShaking(options: { log: boolean }) {
   const { log } = options;
@@ -38,20 +39,29 @@ export async function i18nShaking(options: { log: boolean }) {
     return;
   }
 
-  const { status: shakingStatus, outputKeys } = await shaking(
+  const filterTranslateKeyFileData = await shaking(
     results,
     handleConfigParams!
   );
-  if (!shakingStatus) {
+  if (filterTranslateKeyFileData.length <= 0) {
     return;
   }
 
-  logMessages(
-    [
-      'The processed translation key content has been output to the target folder',
-    ],
-    LOG_TYPE.SUCCESS
+  // check 输出各个文件的 key 的个数是否相等，错误等级为 Errors
+  const checkStatus = check(filterTranslateKeyFileData);
+  if (!checkStatus) {
+    return;
+  }
+
+  // output
+  const outputStatus = await output(
+    filterTranslateKeyFileData,
+    handleConfigParams
   );
+  if (!outputStatus) {
+    logMessages(['output failed'], LOG_TYPE.ERROR);
+    return;
+  }
 
   const logData = handleLogData(
     handleConfigParams,
@@ -59,7 +69,14 @@ export async function i18nShaking(options: { log: boolean }) {
     warnings,
     sourceFilesInfo,
     results,
-    outputKeys
+    filterTranslateKeyFileData
+  );
+
+  logMessages(
+    [
+      `The processed translation key content has been output to the target folder;The number of output keys is ${logData.outputResults.length}.`,
+    ],
+    LOG_TYPE.SUCCESS
   );
 
   log && outputLogger(logData);

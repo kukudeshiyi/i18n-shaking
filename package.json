@@ -14,7 +14,7 @@
   },
   "type": "commonjs",
   "scripts": {
-    "prepare": "npm run build",
+    "prepare": "npm run test && npm run build",
     "build": "cross-env NODE_ENV=production && rollup --config rollup.config.ts",
     "test": "cross-env NODE_ENV=dev && uvu -r tsm tests test.ts"
   },
