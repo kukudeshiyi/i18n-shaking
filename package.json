@@ -24,7 +24,7 @@
     }
   },
   "publishConfig": {
-    "registry": "https://npm.shopee.io/"
+    "registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
